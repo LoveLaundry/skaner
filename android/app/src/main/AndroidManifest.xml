@@ -1,4 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- QR/barcode scanning (mobile_scanner) needs camera access. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Not required so the app still installs on camera-less devices; the
+         scanner screen reports the problem instead of the store hiding the app. -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
     <application
         android:label="love_mobi"
         android:name="${applicationName}"
