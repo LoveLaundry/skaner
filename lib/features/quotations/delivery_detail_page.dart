@@ -549,7 +549,7 @@ class _DateDialog extends StatefulWidget {
 
 class _DateDialogState extends State<_DateDialog> {
   final _reasonCtrl = TextEditingController();
-  late DateTime _date = Fmt.parseDate(widget.date) ?? DateTime.now();
+  late DateTime _date = Fmt.parseDate(widget.date) ?? Fmt.lktNow();
   String _reason = '';
 
   @override

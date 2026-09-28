@@ -41,7 +41,7 @@ class _ShopBillFormPageState extends State<ShopBillFormPage> {
 
   List<ShopBillLine> _lines = const [];
 
-  DateTime? _deliveryDate = DateTime.now();
+  DateTime? _deliveryDate = Fmt.lktNow();
   DateTime? _recurringEndDate;
   String _recurringInterval = 'MONTHLY';
   bool _isRecurring = false;

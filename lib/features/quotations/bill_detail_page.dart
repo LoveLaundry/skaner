@@ -480,7 +480,7 @@ class _PaymentDialogState extends State<_PaymentDialog> {
   late final TextEditingController _notes = TextEditingController();
 
   String _method = 'Cash';
-  DateTime _date = DateTime.now();
+  DateTime _date = Fmt.lktNow();
 
   @override
   void dispose() {

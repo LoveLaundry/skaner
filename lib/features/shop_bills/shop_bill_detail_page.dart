@@ -191,7 +191,7 @@ class _ShopBillDetailPageState extends State<ShopBillDetailPage> {
     final reference = TextEditingController();
     final notes = TextEditingController();
     var method = _paymentMethods.first;
-    var date = DateTime.now();
+    var date = Fmt.lktNow();
 
     return AppDialog.show<bool>(
       context,

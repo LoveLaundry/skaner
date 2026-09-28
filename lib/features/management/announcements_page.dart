@@ -29,7 +29,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
   @override
   void initState() {
     super.initState();
-    _year = DateTime.now().year;
+    _year = Fmt.lktNow().year;
     _holidays = ResourceController<List<Map<String, dynamic>>>(
       key: 'management.announcements',
       cache: AppScope.read(context).cache,
@@ -58,7 +58,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
   List<Map<String, dynamic>> get _rows {
     var rows = _holidays.data ?? const <Map<String, dynamic>>[];
     if (_upcomingOnly) {
-      final today = DateTime.now();
+      final today = Fmt.lktNow();
       rows = rows
           .where((r) => (dateOf(r, ['date']) ?? DateTime(2000)).isAfter(today))
           .toList();
@@ -70,7 +70,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
   int _daysAway(Map<String, dynamic> row) {
     final d = dateOf(row, ['date']);
     if (d == null) return 0;
-    final today = DateTime.now();
+    final today = Fmt.lktNow();
     return d.difference(DateTime(today.year, today.month, today.day)).inDays;
   }
 
@@ -267,7 +267,7 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
     final name = TextEditingController(text: str(row ?? {}, ['name']));
     final description =
         TextEditingController(text: str(row ?? {}, ['description']));
-    var date = dateOf(row ?? {}, ['date']) ?? DateTime.now();
+    var date = dateOf(row ?? {}, ['date']) ?? Fmt.lktNow();
     var recurring = boolOf(row ?? {}, ['is_recurring']);
     var error = false;
     StateSetter? inner;

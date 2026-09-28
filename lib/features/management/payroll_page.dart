@@ -39,7 +39,7 @@ class _PayrollPageState extends State<PayrollPage>
   void initState() {
     super.initState();
     _tabs = TabController(length: 2, vsync: this)..addListener(_onTab);
-    final now = DateTime.now();
+    final now = Fmt.lktNow();
     _year = now.year;
     _month = now.month;
     _controller = _build();

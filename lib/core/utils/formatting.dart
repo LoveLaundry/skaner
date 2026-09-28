@@ -21,6 +21,44 @@ class Fmt {
   static final DateFormat _monthYear = DateFormat('MMMM yyyy', 'en_US');
   static final DateFormat _fileStamp = DateFormat('yyyy-MM-dd');
 
+  /// Asia/Colombo. A fixed +05:30 with no DST.
+  static const Duration lktOffset = Duration(hours: 5, minutes: 30);
+  static const String timeZoneName = 'Asia/Colombo';
+
+  /// The same instant, expressed on the Sri Lankan wall clock.
+  ///
+  /// Dart's [DateFormat] has no `timeZone` option, so we shift the UTC fields
+  /// forward and let the formatter read those fields. This is why the app shows
+  /// the same time on a phone set to London as on one set to Colombo.
+  ///
+  /// A value that already *is* a wall clock — a `DateTime`, or a string with no
+  /// zone designator — is returned as-is, because re-shifting it would move the
+  /// calendar day for anyone east of Colombo.
+  static DateTime? toLkt(Object? value) {
+    if (value is DateTime) return value.toUtc().add(lktOffset);
+    if (value is String && !_hasZone(value)) {
+      final parsed = parseDate(value);
+      return parsed;
+    }
+    return parseDate(value)?.toUtc().add(lktOffset);
+  }
+
+  /// Does this timestamp string carry an explicit UTC offset?
+  static bool _hasZone(String raw) {
+    final s = raw.trim();
+    return s.endsWith('Z') || s.endsWith('z') ||
+        RegExp(r'[+-]\d{2}:?\d{2}$').hasMatch(s);
+  }
+
+  /// Today on the Sri Lankan calendar, as a `DateTime` whose fields are LKT.
+  ///
+  /// Use for date pickers, month/year defaults and `yyyy-MM-dd` comparisons —
+  /// never for measuring elapsed time.
+  static DateTime lktNow() {
+    final n = DateTime.now().toUtc().add(lktOffset);
+    return DateTime(n.year, n.month, n.day, n.hour, n.minute, n.second);
+  }
+
   // ── Numbers ────────────────────────────────────────────────────────────────
   static String money(num? value) => _money.format((value ?? 0).toDouble());
 
@@ -55,55 +93,66 @@ class Fmt {
 
   // ── Dates ──────────────────────────────────────────────────────────────────
   static String date(Object? value) {
-    final d = parseDate(value);
+    final d = toLkt(value);
     return d == null ? '—' : _date.format(d);
   }
 
   static String dateShort(Object? value) {
-    final d = parseDate(value);
+    final d = toLkt(value);
     return d == null ? '—' : _dateShort.format(d);
   }
 
   static String dateTime(Object? value) {
-    final d = parseDate(value);
+    final d = toLkt(value);
     return d == null ? '—' : _dateTime.format(d);
   }
 
   static String time(Object? value) {
-    final d = parseDate(value);
+    final d = toLkt(value);
     return d == null ? '—' : _time.format(d);
   }
 
   static String monthYear(Object? value) {
-    final d = parseDate(value);
+    final d = toLkt(value);
     return d == null ? '—' : _monthYear.format(d);
   }
 
   /// `yyyy-MM-dd` — what every query parameter and POST body expects.
+  ///
+  /// A bare `yyyy-MM-dd` is a calendar date, not an instant, so it is passed
+  /// through untouched. Anything with a time component is converted to the
+  /// Sri Lankan day first, so a 20:00 UTC timestamp belongs to the next LKT day.
   static String isoDate(Object? value) {
-    final d = parseDate(value);
+    if (value is String && !_hasZone(value)) {
+      final s = value.trim();
+      final d = DateTime.tryParse(s) ?? DateTime.tryParse('$s 00:00:00');
+      return d == null ? '' : _isoDate.format(d);
+    }
+    final d = toLkt(value);
     return d == null ? '' : _isoDate.format(d);
   }
 
   static String isoDateTime(Object? value) {
-    final d = parseDate(value);
+    final d = toLkt(value);
     return d == null ? '' : _isoDateTime.format(d);
   }
 
   static String fileStamp(Object? value) {
-    final d = parseDate(value);
+    final d = toLkt(value);
     return d == null ? '' : _fileStamp.format(d);
   }
 
-  static String today() => _isoDate.format(DateTime.now());
+  static String today() => _isoDate.format(lktNow());
 
-  static String nowIso() => DateTime.now().toIso8601String();
+  /// A true instant, in UTC, for storage and sync bookkeeping.
+  static String nowIso() => DateTime.now().toUtc().toIso8601String();
 
   /// "3 days ago" / "in 2 hours" for activity feeds.
   static String relative(Object? value) {
     final d = parseDate(value);
     if (d == null) return '—';
-    final diff = DateTime.now().difference(d);
+    // Elapsed time is an instant difference, so it is measured in UTC.
+    final diff = DateTime.now().toUtc().difference(d.toUtc());
     final future = diff.isNegative;
     final abs = diff.abs();
     String unit;

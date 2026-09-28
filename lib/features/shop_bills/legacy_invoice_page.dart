@@ -494,7 +494,7 @@ class _LegacyInvoicePageState extends State<LegacyInvoicePage> {
 class _EntryDraft {
   final billNumber = TextEditingController();
   final amount = TextEditingController();
-  DateTime? date = DateTime.now();
+  DateTime? date = Fmt.lktNow();
 
   double get parsedAmount =>
       double.tryParse(amount.text.replaceAll(',', '').trim()) ?? 0;

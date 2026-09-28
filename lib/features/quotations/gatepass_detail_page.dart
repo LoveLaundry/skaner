@@ -1027,7 +1027,7 @@ class _MarkDeliveredDialog extends StatefulWidget {
 
 class _MarkDeliveredDialogState extends State<_MarkDeliveredDialog> {
   final _noteCtrl = TextEditingController();
-  DateTime _date = DateTime.now();
+  DateTime _date = Fmt.lktNow();
 
   @override
   void dispose() {
@@ -1115,7 +1115,7 @@ class _DateChangeDialog extends StatefulWidget {
 
 class _DateChangeDialogState extends State<_DateChangeDialog> {
   final _reasonCtrl = TextEditingController();
-  late DateTime _date = Fmt.parseDate(widget.current) ?? DateTime.now();
+  late DateTime _date = Fmt.parseDate(widget.current) ?? Fmt.lktNow();
 
   @override
   void dispose() {

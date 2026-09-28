@@ -39,7 +39,7 @@ class _PerformancePageState extends State<PerformancePage> {
   void initState() {
     super.initState();
     final cache = AppScope.read(context).cache;
-    final today = DateTime.now();
+    final today = Fmt.lktNow();
     _from = DateTime(today.year, today.month, 1);
     _to = today;
     _employees = ResourceController<List<Map<String, dynamic>>>(

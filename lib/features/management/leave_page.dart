@@ -33,7 +33,7 @@ class _LeavePageState extends State<LeavePage> {
   @override
   void initState() {
     super.initState();
-    final today = DateTime.now();
+    final today = Fmt.lktNow();
     _from = DateTime(today.year, today.month, 1);
     _to = today;
     _records = ResourceController<List<Map<String, dynamic>>>(

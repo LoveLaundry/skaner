@@ -41,7 +41,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
   void initState() {
     super.initState();
     final cache = AppScope.read(context).cache;
-    final today = DateTime.now();
+    final today = Fmt.lktNow();
     _from = DateTime(today.year, today.month, 1);
     _to = today;
 
@@ -325,7 +325,7 @@ class _ExpensesPageState extends State<ExpensesPage> {
     final notes = TextEditingController(text: str(row ?? {}, ['notes']));
     var method = str(row ?? {}, ['payment_method'], 'CASH');
     var category = str(row ?? {}, ['category_id'], _categoryId ?? '');
-    var date = dateOf(row ?? {}, ['date']) ?? DateTime.now();
+    var date = dateOf(row ?? {}, ['date']) ?? Fmt.lktNow();
     var error = false;
     StateSetter? inner;
 

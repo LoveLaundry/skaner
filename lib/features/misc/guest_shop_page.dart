@@ -107,7 +107,7 @@ class _GuestShopPageState extends State<GuestShopPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '© ${DateTime.now().year} ${CompanyInfo.name} · Reg. No. '
+                    '© ${Fmt.lktNow().year} ${CompanyInfo.name} · Reg. No. '
                     '${CompanyInfo.registrationNo}',
                     style: t.bodySmall?.copyWith(color: c.fgMuted),
                   ),

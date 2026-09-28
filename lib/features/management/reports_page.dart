@@ -44,7 +44,7 @@ class _ReportsPageState extends State<ReportsPage>
     super.initState();
     _tabs = TabController(length: _reports.length, vsync: this)
       ..addListener(_onTab);
-    final now = DateTime.now();
+    final now = Fmt.lktNow();
     _day = now;
     _from = DateTime(now.year, now.month, 1);
     _to = now;

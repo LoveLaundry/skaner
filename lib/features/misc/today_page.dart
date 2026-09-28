@@ -46,7 +46,7 @@ class _TodayPageState extends State<TodayPage> {
   @override
   void initState() {
     super.initState();
-    final now = DateTime.now();
+    final now = Fmt.lktNow();
     _date = DateTime(now.year, now.month, now.day);
 
     _gatepasses = _rows('today.gatepasses', () => _get('/gatepasses'));
@@ -135,14 +135,14 @@ class _TodayPageState extends State<TodayPage> {
   String get _iso => Fmt.isoDate(_date);
 
   bool get _isToday {
-    final now = DateTime.now();
+    final now = Fmt.lktNow();
     return _date.year == now.year &&
         _date.month == now.month &&
         _date.day == now.day;
   }
 
   bool get _isFuture {
-    final now = DateTime.now();
+    final now = Fmt.lktNow();
     return _date.isAfter(DateTime(now.year, now.month, now.day));
   }
 
@@ -471,7 +471,7 @@ class _TodayPageState extends State<TodayPage> {
             width: 132,
             child: AppDateField(
               value: _date,
-              lastDate: DateTime.now(),
+              lastDate: Fmt.lktNow(),
               onChanged: (v) {
                 if (v != null) _setDate(v);
               },
@@ -491,7 +491,7 @@ class _TodayPageState extends State<TodayPage> {
               label: 'Today',
               variant: AppButtonVariant.ghost,
               size: AppButtonSize.sm,
-              onPressed: () => _setDate(DateTime.now()),
+              onPressed: () => _setDate(Fmt.lktNow()),
             ),
           ],
         ],

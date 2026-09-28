@@ -120,7 +120,7 @@ class _GatepassesPageState extends State<GatepassesPage> {
 
   List<OpsMetric> get _metrics {
     final all = _passes.data ?? const <GatePass>[];
-    final today = Fmt.isoDate(DateTime.now());
+    final today = Fmt.isoDate(Fmt.lktNow());
     int bySection(String key) => all.where((gp) => gp.sectionKey == key).length;
     return [
       OpsMetric(

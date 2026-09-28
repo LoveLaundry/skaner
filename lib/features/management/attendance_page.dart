@@ -39,7 +39,7 @@ class _AttendancePageState extends State<AttendancePage>
     super.initState();
     _tabs = TabController(length: 2, vsync: this);
     final cache = AppScope.read(context).cache;
-    final today = DateTime.now();
+    final today = Fmt.lktNow();
     _from = DateTime(today.year, today.month, 1);
     _to = today;
 

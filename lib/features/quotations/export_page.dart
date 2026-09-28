@@ -153,7 +153,7 @@ class _ExportPageState extends State<ExportPage> {
   Future<void> _export(String type, {required bool csv}) async {
     setState(() => _running = type);
     final path = csv ? '/export/$type' : '/export/$type/xlsx';
-    final name = '$type-${Fmt.isoDate(DateTime.now())}.${csv ? 'csv' : 'xlsx'}';
+    final name = '$type-${Fmt.isoDate(Fmt.lktNow())}.${csv ? 'csv' : 'xlsx'}';
     try {
       final api = AppScope.read(context).api;
       final bytes = csv

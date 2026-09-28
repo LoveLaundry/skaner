@@ -41,7 +41,7 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage>
     super.initState();
     _tabs = TabController(length: 4, vsync: this);
     final cache = AppScope.read(context).cache;
-    _to = DateTime.now();
+    _to = Fmt.lktNow();
     _from = _to.subtract(const Duration(days: 30));
 
     _profile = ResourceController<Map<String, dynamic>>(
@@ -525,8 +525,8 @@ class _EmployeeDetailPageState extends State<EmployeeDetailPage>
                             r,
                             ['slip_number', 'period'],
                             Fmt.monthYear(
-                              DateTime(intOf(r, ['year'], DateTime.now().year),
-                                  intOf(r, ['month'], DateTime.now().month)),
+                              DateTime(intOf(r, ['year'], Fmt.lktNow().year),
+                                  intOf(r, ['month'], Fmt.lktNow().month)),
                             )),
                         style: context.texts.titleSmall,
                       ),

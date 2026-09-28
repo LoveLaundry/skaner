@@ -45,7 +45,7 @@ class _DeliveryFormPageState extends State<DeliveryFormPage> {
 
   Availability? _available;
   String _search = '';
-  DateTime _deliveryDate = DateTime.now();
+  DateTime _deliveryDate = Fmt.lktNow();
   bool _loading = true;
   bool _saving = false;
   String? _error;
@@ -143,7 +143,7 @@ class _DeliveryFormPageState extends State<DeliveryFormPage> {
         _deliveredByCtrl.text = d.deliveredBy;
         _receivedByCtrl.text = d.receivedBy;
         _notesCtrl.text = d.notes ?? '';
-        _deliveryDate = Fmt.parseDate(d.deliveryDate) ?? DateTime.now();
+        _deliveryDate = Fmt.parseDate(d.deliveryDate) ?? Fmt.lktNow();
         for (final line in d.items) {
           _quantities['${line.itemName}||${line.specification.trim()}'] =
               line.quantity;

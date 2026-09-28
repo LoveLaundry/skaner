@@ -50,7 +50,7 @@ class _GatepassFormPageState extends State<GatepassFormPage> {
   String _clientName = '';
   String _quotationId = '';
   Quotation? _quotation;
-  DateTime _receivingDate = DateTime.now();
+  DateTime _receivingDate = Fmt.lktNow();
 
   bool _loading = false;
   bool _saving = false;
@@ -83,7 +83,7 @@ class _GatepassFormPageState extends State<GatepassFormPage> {
   /// The web app seeds `GP-YYYYMMDD-NNNN`; the server does not care, but the
   /// printed slip is easier to file when the number carries the date.
   static String _generateNumber() {
-    final now = DateTime.now();
+    final now = Fmt.lktNow();
     String two(int v) => v.toString().padLeft(2, '0');
     final suffix = 1000 + (DateTime.now().millisecondsSinceEpoch % 9000);
     return 'GP-${now.year}${two(now.month)}${two(now.day)}-$suffix';
@@ -106,7 +106,7 @@ class _GatepassFormPageState extends State<GatepassFormPage> {
         _notesCtrl.text = gp.notes ?? '';
         _clientName = gp.clientName;
         _quotationId = gp.quotationId ?? '';
-        _receivingDate = date ?? DateTime.now();
+        _receivingDate = date ?? Fmt.lktNow();
         for (final l in _lines) {
           l.dispose();
         }

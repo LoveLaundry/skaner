@@ -562,7 +562,7 @@ class _JobFormState extends State<_JobForm> {
 
   String _type = 'delivery';
   String _assignedTo = '';
-  DateTime _scheduledAt = DateTime.now();
+  DateTime _scheduledAt = Fmt.lktNow();
 
   bool _saving = false;
 
