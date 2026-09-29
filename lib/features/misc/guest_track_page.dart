@@ -11,6 +11,7 @@ import '../../../ui/kit/feedback.dart';
 import '../../../ui/kit/inputs.dart';
 import '../../../ui/kit/primitives.dart';
 import '../../../ui/theme.dart';
+import 'guest_tag.dart';
 
 /// Public garment-tag tracking.
 ///

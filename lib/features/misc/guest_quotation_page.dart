@@ -11,6 +11,7 @@ import '../../../ui/kit/inputs.dart';
 import '../../../ui/kit/primitives.dart';
 import '../../../ui/shell/app_shell.dart';
 import '../../../ui/theme.dart';
+import 'guest_tag.dart';
 
 /// Public order lookup by quotation reference.
 ///
@@ -44,12 +45,11 @@ class _GuestQuotationPageState extends State<GuestQuotationPage> {
   }
 
   Future<void> _lookup() async {
-    final raw = _reference.text.trim();
-    if (raw.isEmpty) {
+    final id = GuestTag.slugOf(_reference.text);
+    if (id == null) {
       setState(() => _message = 'Enter the reference on your quotation.');
       return;
     }
-    final id = raw.split('?').first.split('/').where((s) => s.isNotEmpty).last;
     setState(() {
       _busy = true;
       _message = null;

@@ -489,7 +489,7 @@ class _DashboardPageState extends State<DashboardPage> {
         Fmt.count(intOf(_current, ['activeClients', 'active_clients'])),
         _delta(numOf(_current, ['activeClients', 'active_clients']),
             numOf(prev, ['activeClients', 'active_clients'])),
-        '/customers',
+        '/client-statement',
         Icons.people_outline
       ),
     ];
@@ -570,7 +570,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    'LKR ${_outstanding.toStringAsFixed(0)}',
+                    'Rs. ${_outstanding.toStringAsFixed(0)}',
                     style: t.displaySmall?.copyWith(color: c.fg),
                   ),
                 ),
@@ -580,12 +580,12 @@ class _DashboardPageState extends State<DashboardPage> {
                     for (final m in [
                       (
                         'Collected',
-                        'LKR ${Fmt.compact(_collected)}',
+                        'Rs. ${Fmt.compact(_collected)}',
                         '${collectedPct.toStringAsFixed(0)}%'
                       ),
                       (
                         'Pending',
-                        'LKR ${Fmt.compact(_outstanding)}',
+                        'Rs. ${Fmt.compact(_outstanding)}',
                         '${outstandingPct.toStringAsFixed(0)}%'
                       ),
                       (
@@ -688,7 +688,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           ),
                         ),
                         Text(
-                            'LKR ${numOf(cl, [
+                            'Rs. ${numOf(cl, [
                                   'outstanding'
                                 ]).toStringAsFixed(0)}',
                             style: t.labelLarge?.copyWith(color: c.fg)),
@@ -1090,7 +1090,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Text(str(s, ['name']),
                             style: t.labelLarge?.copyWith(color: c.fg)),
                       ),
-                      Text('LKR ${Fmt.compact(numOf(s, ['value']))}',
+                      Text('Rs. ${Fmt.compact(numOf(s, ['value']))}',
                           style: t.labelLarge?.copyWith(color: c.fg)),
                       const SizedBox(width: 6),
                       Text(
@@ -1470,7 +1470,7 @@ class _DashboardPageState extends State<DashboardPage> {
       icon: Icons.bar_chart_outlined,
       trailing: total == 0
           ? null
-          : Text('LKR ${Fmt.compact(total)}',
+          : Text('Rs. ${Fmt.compact(total)}',
               style: t.labelLarge?.copyWith(color: c.fg)),
       child: total == 0
           ? const _ChartEmpty('Nothing outstanding')
@@ -1483,7 +1483,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         child: Text(b.$1,
                             style: t.labelLarge?.copyWith(color: c.fg)),
                       ),
-                      Text('LKR ${Fmt.compact(b.$2)}',
+                      Text('Rs. ${Fmt.compact(b.$2)}',
                           style: t.labelLarge?.copyWith(color: c.fg)),
                       const SizedBox(width: 6),
                       Text('${(b.$2 / total * 100).toStringAsFixed(0)}%',
