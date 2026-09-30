@@ -17,6 +17,8 @@ import '../../../ui/kit/shell_parts.dart';
 import '../../../ui/shell/app_shell.dart';
 import '../../../ui/theme.dart';
 
+const dashboardKpiCardAspectRatio = 0.95;
+
 /// Port of `features/quotations/pages/dashboard-page.tsx`.
 ///
 /// The period metrics, the previous-period comparison, the aging buckets and the
@@ -500,7 +502,7 @@ class _DashboardPageState extends State<DashboardPage> {
       physics: const NeverScrollableScrollPhysics(),
       mainAxisSpacing: 10,
       crossAxisSpacing: 10,
-      childAspectRatio: 1.75,
+      childAspectRatio: dashboardKpiCardAspectRatio,
       children: [
         for (final k in kpis)
           AppStatCard(
