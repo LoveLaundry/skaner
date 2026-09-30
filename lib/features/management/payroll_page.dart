@@ -125,22 +125,15 @@ class _PayrollPageState extends State<PayrollPage>
   Widget build(BuildContext context) {
     final services = AppScope.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Payroll'),
-        actions: [
-          AppExportButton(onExport: _export),
-          const SizedBox(width: 4),
-        ],
-        bottom: TabBar(
-          controller: _tabs,
-          tabs: const [
-            Tab(text: 'Preview'),
-            Tab(text: 'Slips'),
-          ],
-        ),
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Payroll',
+            actions: [
+              AppExportButton(onExport: _export),
+              const SizedBox(width: 4),
+            ],
+          ),
           AppSyncStatusBar(
             status: _controller.status,
             updatedAt: _controller.lastUpdated,

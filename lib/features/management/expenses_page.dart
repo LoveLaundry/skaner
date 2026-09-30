@@ -128,15 +128,15 @@ class _ExpensesPageState extends State<ExpensesPage> {
   Widget build(BuildContext context) {
     final services = AppScope.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Expenses'),
-        actions: [
-          AppExportButton(onExport: _export),
-          const SizedBox(width: 4),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Expenses',
+            actions: [
+              AppExportButton(onExport: _export),
+              const SizedBox(width: 4),
+            ],
+          ),
           AppSyncStatusBar(
             status: _expenses.status,
             updatedAt: _expenses.lastUpdated,

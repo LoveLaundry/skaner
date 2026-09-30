@@ -8,6 +8,7 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 import '_management_shared.dart';
 
 /// There is no announcements endpoint in the management API. The company's
@@ -78,9 +79,11 @@ class _AnnouncementsPageState extends State<AnnouncementsPage> {
   Widget build(BuildContext context) {
     final services = AppScope.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Announcements')),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Announcements',
+          ),
           AppSyncStatusBar(
             status: _holidays.status,
             updatedAt: _holidays.lastUpdated,

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'nav/app_router.dart';
 import 'nav/route_registry.dart';
 import 'state/app_services.dart';
+import 'ui/kit/toast.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +31,7 @@ class LoveLaundryApp extends StatelessWidget {
           title: 'Love Laundry Ops',
           debugShowCheckedModeBanner: false,
           theme: services.theme.materialTheme,
+          builder: (context, child) => ToastHost(child: child!),
           home: AppRouter(services: services),
         );
       },

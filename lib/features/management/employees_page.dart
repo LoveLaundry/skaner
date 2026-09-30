@@ -110,20 +110,20 @@ class _EmployeesPageState extends State<EmployeesPage> {
     final services = AppScope.of(context);
     final visible = _visible;
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Employees'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.person_add_alt_1_outlined,
-            tooltip: 'Add employee',
-            variant: AppButtonVariant.primary,
-            onPressed: () => _openForm(null),
-          ),
-          const SizedBox(width: 4),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Employees',
+            actions: [
+              AppButton.icon(
+                icon: Icons.person_add_alt_1_outlined,
+                tooltip: 'Add employee',
+                variant: AppButtonVariant.primary,
+                onPressed: () => _openForm(null),
+              ),
+              const SizedBox(width: 4),
+            ],
+          ),
           AppSyncStatusBar(
             status: _controller.status,
             updatedAt: _controller.lastUpdated,

@@ -7,6 +7,7 @@ import '../../ui/kit/feedback.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 import '_management_shared.dart';
 
 /// There is no management roles endpoint — the web app carries no role admin
@@ -59,9 +60,11 @@ class _RolesPageState extends State<RolesPage> {
     final user = services.auth.user;
     final mine = user?.roleId.toUpperCase() ?? '';
     return Scaffold(
-      appBar: AppBar(title: const Text('Roles')),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Roles',
+          ),
           AppSyncStatusBar(
             status: _employees.status,
             updatedAt: _employees.lastUpdated,

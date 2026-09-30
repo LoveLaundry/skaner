@@ -7,6 +7,7 @@ import '../../ui/kit/feedback.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 import '_management_shared.dart';
 
 /// There is no management departments endpoint. The department is an employee
@@ -83,9 +84,11 @@ class _DepartmentsPageState extends State<DepartmentsPage> {
   Widget build(BuildContext context) {
     final services = AppScope.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Departments')),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Departments',
+          ),
           AppSyncStatusBar(
             status: _employees.status,
             updatedAt: _employees.lastUpdated,

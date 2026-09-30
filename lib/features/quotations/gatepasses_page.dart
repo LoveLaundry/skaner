@@ -8,6 +8,7 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 import 'bill_model.dart';
 import 'gatepass_detail_page.dart';
 import 'gatepass_form_page.dart';
@@ -203,19 +204,19 @@ class _GatepassesPageState extends State<GatepassesPage> {
     final by = grouped();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Gate passes'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.refresh,
-            tooltip: 'Refresh',
-            loading: _passes.isLoading,
-            onPressed: _reload,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Gate passes',
+            actions: [
+              AppButton.icon(
+                icon: Icons.refresh,
+                tooltip: 'Refresh',
+                loading: _passes.isLoading,
+                onPressed: _reload,
+              ),
+            ],
+          ),
           AppSyncStatusBar(
             status: _passes.status,
             updatedAt: _passes.lastUpdated,
@@ -355,7 +356,7 @@ class _GatepassesPageState extends State<GatepassesPage> {
           ? FloatingActionButton.extended(
               onPressed: _openCreate,
               backgroundColor: context.c.brand,
-              foregroundColor: Colors.white,
+              foregroundColor: context.c.onBrand,
               icon: const Icon(Icons.add),
               label: const Text('New gate pass'),
             )

@@ -154,21 +154,21 @@ class _Body extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: c.surface,
                   borderRadius: BorderRadius.circular(Radii.md),
                   border: Border.all(color: c.line),
                 ),
                 child: QrImageView(
                   data: item.linenId,
                   size: 168,
-                  backgroundColor: Colors.white,
-                  eyeStyle: const QrEyeStyle(
+                  backgroundColor: c.surface,
+                  eyeStyle: QrEyeStyle(
                     eyeShape: QrEyeShape.square,
-                    color: Colors.black,
+                    color: c.fg,
                   ),
-                  dataModuleStyle: const QrDataModuleStyle(
+                  dataModuleStyle: QrDataModuleStyle(
                     dataModuleShape: QrDataModuleShape.square,
-                    color: Colors.black,
+                    color: c.fg,
                   ),
                 ),
               ),
@@ -180,7 +180,7 @@ class _Body extends StatelessWidget {
                   data: item.linenId,
                   drawText: false,
                   height: 44,
-                  backgroundColor: Colors.white,
+                  backgroundColor: c.surface,
                 ),
               ),
               const SizedBox(height: 10),

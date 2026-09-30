@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../theme.dart';
+import 'feedback.dart';
 import 'primitives.dart';
 
 /// A toast queue the whole app can raise errors and confirmations through,
@@ -176,7 +177,7 @@ class _ToastCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: bg,
         border: Border.all(color: border),
-        borderRadius: Border.circular(Radii.md),
+        borderRadius: BorderRadius.circular(Radii.md),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.10),

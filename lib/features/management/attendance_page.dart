@@ -143,22 +143,15 @@ class _AttendancePageState extends State<AttendancePage>
   Widget build(BuildContext context) {
     final services = AppScope.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Attendance'),
-        bottom: TabBar(
-          controller: _tabs,
-          tabs: const [
-            Tab(text: 'My sheet'),
-            Tab(text: 'All staff'),
-          ],
-        ),
-        actions: [
-          AppExportButton(onExport: _export),
-          const SizedBox(width: 4),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Attendance',
+            actions: [
+              AppExportButton(onExport: _export),
+              const SizedBox(width: 4),
+            ],
+          ),
           AppSyncStatusBar(
             status: _records.status,
             updatedAt: _records.lastUpdated,

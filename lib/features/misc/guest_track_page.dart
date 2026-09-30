@@ -45,8 +45,8 @@ class _GuestTrackPageState extends State<GuestTrackPage> {
   }
 
   Future<void> _track() async {
-    final code = _code.text.trim();
-    if (code.isEmpty) {
+    final slug = GuestTag.slugOf(_code.text);
+    if (slug == null) {
       setState(() => _error = 'Enter the code printed on your garment tag.');
       return;
     }
@@ -56,8 +56,6 @@ class _GuestTrackPageState extends State<GuestTrackPage> {
       _notFound = null;
     });
     try {
-      // A scanned tag arrives as a full URL, so accept the last path segment.
-      final slug = code.split('?').first.split('/').where((s) => s.isNotEmpty).last;
       final data = await AppScope.read(context).api.get(
         ServiceNames.quotation,
         '${GuestRoute.trackTag}$slug',

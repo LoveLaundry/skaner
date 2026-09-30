@@ -184,19 +184,19 @@ class _BillsPageState extends State<BillsPage> {
     final history = rows.where((b) => b.isCancelled).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bills'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.refresh,
-            tooltip: 'Refresh',
-            loading: _bills.isLoading || _unbilled.isLoading,
-            onPressed: _reload,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Bills',
+            actions: [
+              AppButton.icon(
+                icon: Icons.refresh,
+                tooltip: 'Refresh',
+                loading: _bills.isLoading || _unbilled.isLoading,
+                onPressed: _reload,
+              ),
+            ],
+          ),
           AppSyncStatusBar(
             status: _bills.status,
             updatedAt: _bills.lastUpdated,
@@ -359,7 +359,7 @@ class _BillsPageState extends State<BillsPage> {
           ? FloatingActionButton.extended(
               onPressed: _openCreate,
               backgroundColor: context.c.brand,
-              foregroundColor: Colors.white,
+              foregroundColor: context.c.onBrand,
               icon: const Icon(Icons.add),
               label: const Text('New bill'),
             )

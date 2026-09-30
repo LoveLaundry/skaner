@@ -94,9 +94,11 @@ class _LinenFlowHotelPageState extends State<LinenFlowHotelPage> {
     final global = _controller.data;
 
     return Scaffold(
-      appBar: AppBar(title: Text(_name)),
       body: Column(
         children: [
+          AppPageHeader(
+            title: _name,
+          ),
           AppSyncStatusBar(
             status: _controller.status,
             updatedAt: _controller.lastUpdated,

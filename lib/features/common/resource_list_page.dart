@@ -289,7 +289,7 @@ class _ResourceListPageState extends State<ResourceListPage> {
           ? FloatingActionButton.extended(
               onPressed: () => _openForm(null),
               backgroundColor: context.c.brand,
-              foregroundColor: Colors.white,
+              foregroundColor: context.c.onBrand,
               icon: const Icon(Icons.add),
               label: Text(def.createLabel),
             )

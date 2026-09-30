@@ -30,6 +30,7 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.brandSoft,
     required this.brandBorder,
     required this.brandText,
+    required this.onBrand,
     required this.success,
     required this.successSoft,
     required this.successBorder,
@@ -76,6 +77,7 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color brandSoft;
   final Color brandBorder;
   final Color brandText;
+  final Color onBrand;
 
   final Color success;
   final Color successSoft;
@@ -125,6 +127,7 @@ class AppColors extends ThemeExtension<AppColors> {
     brandSoft: Color(0xFFFEF3F2),
     brandBorder: Color(0xFFFECDC9),
     brandText: Color(0xFFB42318),
+    onBrand: Color(0xFFFFFFFF),
     success: Color(0xFF067647),
     successSoft: Color(0xFFECFDF3),
     successBorder: Color(0xFFA9E5C3),
@@ -169,6 +172,7 @@ class AppColors extends ThemeExtension<AppColors> {
     brandSoft: Color(0xFF2A1518),
     brandBorder: Color(0xFF4A2022),
     brandText: Color(0xFFF97066),
+    onBrand: Color(0xFFFFFFFF),
     success: Color(0xFF6CE9A6),
     successSoft: Color(0xFF0D2019),
     successBorder: Color(0xFF1E4436),
@@ -239,6 +243,7 @@ class AppColors extends ThemeExtension<AppColors> {
         brandSoft: brandSoft,
         brandBorder: brandBorder,
         brandText: brandText,
+        onBrand: base.onBrand,
         success: base.success,
         successSoft: base.successSoft,
         successBorder: base.successBorder,
@@ -284,6 +289,7 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? brandSoft,
     Color? brandBorder,
     Color? brandText,
+    Color? onBrand,
     Color? success,
     Color? successSoft,
     Color? successBorder,
@@ -327,6 +333,7 @@ class AppColors extends ThemeExtension<AppColors> {
         brandSoft: brandSoft ?? this.brandSoft,
         brandBorder: brandBorder ?? this.brandBorder,
         brandText: brandText ?? this.brandText,
+        onBrand: onBrand ?? this.onBrand,
         success: success ?? this.success,
         successSoft: successSoft ?? this.successSoft,
         successBorder: successBorder ?? this.successBorder,
@@ -375,6 +382,7 @@ class AppColors extends ThemeExtension<AppColors> {
       brandSoft: c(brandSoft, other.brandSoft),
       brandBorder: c(brandBorder, other.brandBorder),
       brandText: c(brandText, other.brandText),
+      onBrand: c(onBrand, other.onBrand),
       success: c(success, other.success),
       successSoft: c(successSoft, other.successSoft),
       successBorder: c(successBorder, other.successBorder),
@@ -667,13 +675,19 @@ class AppThemeData {
         ColorScheme.fromSeed(seedColor: colors.brand, brightness: Brightness.light)
             .copyWith(
               primary: colors.brand,
-              onPrimary: Colors.white,
+              onPrimary: colors.onBrand,
               secondary: colors.brandHover,
-              onSecondary: Colors.white,
+              onSecondary: colors.onBrand,
+              secondaryContainer: colors.brandSoft,
+              onSecondaryContainer: colors.brandHover,
               surface: colors.surface,
               onSurface: colors.fg,
+              surfaceContainer: colors.surface2,
+              surfaceContainerLow: colors.surfaceSunken,
+              surfaceContainerHigh: colors.surface3,
+              surfaceTint: Colors.transparent,
               error: colors.danger,
-              onError: Colors.white,
+              onError: colors.onBrand,
               outline: colors.line2,
             )
             .copyWith(brightness: theme.isDark ? Brightness.dark : Brightness.light);
@@ -848,7 +862,16 @@ class AppThemeData {
         elevation: 0,
         height: 62,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        labelTextStyle: WidgetStatePropertyAll(textTheme.labelSmall),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          final selected = states.contains(WidgetState.selected);
+          // A colorless plain style would pre-empt M3's onSurface fallback and
+          // lose the selected/unselected distinction entirely; carry colour +
+          // weight explicitly so the active tab reads at a glance.
+          return textTheme.labelSmall!.copyWith(
+            color: selected ? colors.brand : colors.fgFaint,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+          );
+        }),
         iconTheme: WidgetStateProperty.resolveWith((states) => IconThemeData(
               color: states.contains(WidgetState.selected)
                   ? colors.brand

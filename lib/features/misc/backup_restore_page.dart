@@ -20,6 +20,7 @@ import '../../../ui/kit/data.dart';
 import '../../../ui/kit/feedback.dart';
 import '../../../ui/kit/primitives.dart';
 import '../../../ui/theme.dart';
+import '../../../ui/kit/inputs.dart';
 
 /// Port of `features/reports-backup/reports-backup-page.tsx`.
 ///
@@ -193,7 +194,10 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
       final year = int.parse(_year);
       final month = int.parse(_monthNumber);
       final last = DateTime(year, month + 1, 0).day;
-      return ('$_year-$_monthNumber-01', '$_year-$_monthNumber-${last.toString().padLeft(2, '0')}');
+      return (
+        '$_year-$_monthNumber-01',
+        '$_year-$_monthNumber-${last.toString().padLeft(2, '0')}'
+      );
     }
     final day = DateTime.parse(_date);
     return (
@@ -292,13 +296,15 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
         extra: {'start_date': start, 'end_date': end},
       );
       return rows
-          .where((r) => _inPeriod(
-              r['transaction_date'] ?? r['date'] ?? r['created_at']))
+          .where((r) =>
+              _inPeriod(r['transaction_date'] ?? r['date'] ?? r['created_at']))
           .map((r) => {
                 'id': _text(r['id'] ?? r['_id'] ?? r['transaction_id']),
                 'date': _dayOf(r['transaction_date'] ?? r['date']),
-                'customer': _text(
-                    r['customer_name'] ?? r['customer'] ?? r['client_name'] ?? r['payee']),
+                'customer': _text(r['customer_name'] ??
+                    r['customer'] ??
+                    r['client_name'] ??
+                    r['payee']),
                 'description':
                     _text(r['description'] ?? r['particulars'] ?? r['notes']),
                 'source': _text(r['source']),
@@ -325,12 +331,14 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           .map((r) => {
                 'id': _text(r['id'] ?? r['_id'] ?? r['expense_id']),
                 'date': _dayOf(r['date'] ?? r['expense_date']),
-                'category':
-                    _text(r['category_name'] ?? r['category'] ?? r['category_id']),
+                'category': _text(
+                    r['category_name'] ?? r['category'] ?? r['category_id']),
                 'description':
                     _text(r['description'] ?? r['particulars'] ?? r['notes']),
-                'payee': _text(
-                    r['payee'] ?? r['expense_for'] ?? r['paid_to'] ?? r['vendor']),
+                'payee': _text(r['payee'] ??
+                    r['expense_for'] ??
+                    r['paid_to'] ??
+                    r['vendor']),
                 'payment_method': _text(r['payment_method'] ?? r['method']),
                 'amount': _num(r['amount'] ?? r['total'] ?? r['value']),
               })
@@ -350,7 +358,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
         },
       );
       return _rows(payload).map((r) {
-        final id = _text(r['employee_id'] ?? r['employee'] ?? r['id'] ?? r['_id']);
+        final id =
+            _text(r['employee_id'] ?? r['employee'] ?? r['id'] ?? r['_id']);
         return {
           'employee_id': id,
           'employee_name': _text(
@@ -371,20 +380,26 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
         extra: {'year': int.parse(_year), 'month': int.parse(_monthNumber)},
       );
       return rows
-          .where((r) => _inPeriod(
-              r['paid_date'] ?? r['date'] ?? r['created_at'] ?? r['settled_date']))
+          .where((r) => _inPeriod(r['paid_date'] ??
+              r['date'] ??
+              r['created_at'] ??
+              r['settled_date']))
           .map((r) => {
                 'slip_id': _text(r['id'] ?? r['_id'] ?? r['slip_id']),
                 'employee_name': _text(
-                    r['employee_name'] ?? r['name'] ?? r['full_name'], 'Unknown'),
+                    r['employee_name'] ?? r['name'] ?? r['full_name'],
+                    'Unknown'),
                 'period_start': _text(r['period_start'] ?? r['start_date']),
                 'period_end': _text(r['period_end'] ?? r['end_date']),
                 'gross': _num(
                     r['total_earnings'] ?? r['gross'] ?? r['gross_salary']),
-                'deductions': _num(
-                    r['total_deductions'] ?? r['deductions'] ?? r['deduction_total']),
-                'net': _num(
-                    r['net_salary'] ?? r['net'] ?? r['net_pay'] ?? r['take_home']),
+                'deductions': _num(r['total_deductions'] ??
+                    r['deductions'] ??
+                    r['deduction_total']),
+                'net': _num(r['net_salary'] ??
+                    r['net'] ??
+                    r['net_pay'] ??
+                    r['take_home']),
                 'status': _text(r['status'], 'FINALIZED').toUpperCase(),
                 'paid_date': _text(r['paid_date']),
               })
@@ -398,8 +413,10 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
         extra: {'start_date': start, 'end_date': end},
       );
       return rows
-          .where((r) => _inPeriod(
-              r['bill_date'] ?? r['date'] ?? r['created_at'] ?? r['pickup_date']))
+          .where((r) => _inPeriod(r['bill_date'] ??
+              r['date'] ??
+              r['created_at'] ??
+              r['pickup_date']))
           .toList();
     }));
 
@@ -410,16 +427,20 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
         extra: {'start_date': start, 'end_date': end},
       );
       return rows
-          .where((r) => _inPeriod(
-              r['payment_date'] ?? r['date'] ?? r['created_at'] ?? r['paid_date']))
+          .where((r) => _inPeriod(r['payment_date'] ??
+              r['date'] ??
+              r['created_at'] ??
+              r['paid_date']))
           .map((r) => {
                 'id': _text(r['id'] ?? r['_id'] ?? r['payment_id']),
                 'date': _dayOf(r['payment_date'] ?? r['date']),
                 'customer': _text(
                     r['customer_name'] ?? r['customer'] ?? r['client_name']),
                 'method': _text(r['payment_method'] ?? r['method']),
-                'amount': _num(
-                    r['amount'] ?? r['total_amount'] ?? r['total'] ?? r['value']),
+                'amount': _num(r['amount'] ??
+                    r['total_amount'] ??
+                    r['total'] ??
+                    r['value']),
               })
           .toList();
     }));
@@ -427,7 +448,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
     sources.add(await _collect('shop_bills', 'Shop bills', () async {
       final rows = await _paged(ServiceNames.bills, '/shop-bills');
       return rows
-          .where((r) => _inPeriod(r['bill_date'] ?? r['date'] ?? r['created_at']))
+          .where(
+              (r) => _inPeriod(r['bill_date'] ?? r['date'] ?? r['created_at']))
           .toList();
     }));
 
@@ -435,7 +457,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
       final rows =
           await _paged(ServiceNames.bills, '/shop-bills/legacy', limit: 200);
       return rows
-          .where((r) => _inPeriod(r['bill_date'] ?? r['date'] ?? r['created_at']))
+          .where(
+              (r) => _inPeriod(r['bill_date'] ?? r['date'] ?? r['created_at']))
           .toList();
     }));
 
@@ -462,13 +485,15 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
     sources.add(await _collect('returns', 'Returns', () async {
       final rows = await _paged(ServiceNames.bills, '/returns');
       return rows
-          .where((r) => _inPeriod(r['return_date'] ?? r['date'] ?? r['created_at']))
+          .where((r) =>
+              _inPeriod(r['return_date'] ?? r['date'] ?? r['created_at']))
           .toList();
     }));
 
     sources.add(await _collect('linen_status', 'Linen stock status', () async {
       final api = AppScope.read(context).api;
-      return _rows(await api.get(ServiceNames.bills, '/linens', query: {'limit': 5000}));
+      return _rows(
+          await api.get(ServiceNames.bills, '/linens', query: {'limit': 5000}));
     }));
 
     double totalOf(String key) => sources
@@ -515,7 +540,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
     final hashes = <String, dynamic>{};
     final data = <String, dynamic>{};
     for (final s in snapshot.sources) {
-      hashes[s.key] = sha256.convert(utf8.encode(jsonEncode(s.records))).toString();
+      hashes[s.key] =
+          sha256.convert(utf8.encode(jsonEncode(s.records))).toString();
       data[s.key] = s.records;
     }
     return {
@@ -639,7 +665,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
 
     try {
       _append('Started at ${stamp(startedAt)} (UTC)');
-      _append('Generating ${_monthMode ? 'MONTHLY' : 'daily'} report for $_period —'
+      _append(
+          'Generating ${_monthMode ? 'MONTHLY' : 'daily'} report for $_period —'
           '${pdf && json ? ' PDF + JSON' : pdf ? ' PDF' : ' JSON'}');
 
       final snapshot = await _collectSnapshot();
@@ -649,10 +676,12 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
       _append('Snapshot ready: $okCount/${snapshot.sources.length} sources'
           '${failed.isEmpty ? '' : ' (unavailable: ${failed.join(', ')})'}');
       for (final s in snapshot.sources) {
-        _append('  ${s.ok ? 'ok  ' : 'FAIL'} ${s.label}: fetched ${s.fetched} → '
+        _append(
+            '  ${s.ok ? 'ok  ' : 'FAIL'} ${s.label}: fetched ${s.fetched} → '
             'kept ${s.records.length}${s.error != null ? ' (${s.error})' : ''}');
       }
-      _append('API bases → ${snapshot.apiBases['mgmt_api']} · ${snapshot.apiBases['bills_api']}');
+      _append(
+          'API bases → ${snapshot.apiBases['mgmt_api']} · ${snapshot.apiBases['bills_api']}');
       _append('Ledger: income ${Fmt.money(snapshot.income)} • '
           'expenses ${Fmt.money(snapshot.expenses)} • net ${Fmt.money(snapshot.net)}');
 
@@ -677,14 +706,15 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
         final built = await _buildJson(snapshot);
         final file = File('${dir.path}/$_prefix.json.gz');
         await file.writeAsBytes(built.gzip, flush: true);
-        _append('JSON.gz ready: ${_fmtBytes(built.gzip.length)} (round-trip verified)');
+        _append(
+            'JSON.gz ready: ${_fmtBytes(built.gzip.length)} (round-trip verified)');
         files.add(_SavedFile('$_prefix.json.gz', built.gzip.length));
         paths.add(file.path);
 
         final verifyFile = File('${dir.path}/$_prefix.verify.json');
         await verifyFile.writeAsString(jsonEncode(built.verify), flush: true);
-        files.add(
-            _SavedFile('$_prefix.verify.json', utf8.encode(jsonEncode(built.verify)).length));
+        files.add(_SavedFile('$_prefix.verify.json',
+            utf8.encode(jsonEncode(built.verify)).length));
         paths.add(verifyFile.path);
       }
 
@@ -698,8 +728,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
         'finished_at': finishedAt.toIso8601String(),
         'folder_name': 'backups/$_relativePath',
         'files': [
-          for (final f in files)
-            {'name': f.name, 'size': f.size}
+          for (final f in files) {'name': f.name, 'size': f.size}
         ],
         'modes': [
           if (pdf) 'pdf',
@@ -757,19 +786,22 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
         ),
         build: (context) => [
           pw.Text(CompanyInfo.name,
-              style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
+              style:
+                  pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
           pw.Text(
             '${_monthMode ? 'Monthly' : 'Daily'} report — '
             '${_monthMode ? _monthLabel(_month) : _fmtDate(_date)}',
             style: const pw.TextStyle(fontSize: 13),
           ),
           pw.SizedBox(height: 12),
-          pw.Text('Ledger', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+          pw.Text('Ledger',
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           _ledgerRow('Income', Fmt.money(snapshot.income)),
           _ledgerRow('Expenses', Fmt.money(snapshot.expenses)),
           _ledgerRow('Net', Fmt.money(snapshot.net)),
           pw.SizedBox(height: 12),
-          pw.Text('Data sources', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+          pw.Text('Data sources',
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           pw.Table(
             border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
             children: [
@@ -798,7 +830,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           ],
           if (expenses.records.isNotEmpty) ...[
             pw.SizedBox(height: 12),
-            pw.Text('Expenses', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+            pw.Text('Expenses',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
             _recordTable(<_Column>[
               const _Column('Date', 'date'),
               const _Column('Category', 'category'),
@@ -808,7 +841,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           ],
           if (attendance.records.isNotEmpty) ...[
             pw.SizedBox(height: 12),
-            pw.Text('Attendance', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+            pw.Text('Attendance',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
             _recordTable(<_Column>[
               const _Column('Date', 'date'),
               const _Column('Employee', 'employee_name'),
@@ -841,7 +875,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
         ],
       );
 
-  pw.Widget _recordTable(List<_Column> spec, List<Map<String, dynamic>> records) {
+  pw.Widget _recordTable(
+      List<_Column> spec, List<Map<String, dynamic>> records) {
     return pw.Table(
       border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
       children: [
@@ -976,11 +1011,11 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
 
       // Restored rows are historical, so they are written with the snapshot's
       // own timestamp: a months-old backup must not appear as freshly synced.
-      final takenAt = DateTime.tryParse(
-              meta['generated_at'] as String? ?? '') ??
-          DateTime.now().toUtc();
-      final stale = takenAt.isAfter(
-          DateTime.now().subtract(QueryCache.stalenessFor('bills')));
+      final takenAt =
+          DateTime.tryParse(meta['generated_at'] as String? ?? '') ??
+              DateTime.now().toUtc();
+      final stale = takenAt
+          .isAfter(DateTime.now().subtract(QueryCache.stalenessFor('bills')));
       final skipped = <String>[];
       var restored = 0;
       for (final entry in data.entries) {
@@ -1012,8 +1047,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           '${_two(takenAt.day)} ${_two(takenAt.hour)}:${_two(takenAt.minute)}';
       final note =
           skipped.isEmpty ? '' : ' · ${skipped.length} source(s) skipped';
-      AppToast.success(context,
-          'Restored $restored source(s) from $when$note');
+      AppToast.success(context, 'Restored $restored source(s) from $when$note');
     } catch (err) {
       if (!mounted) return;
       AppToast.error(context, 'Restore failed: $err');
@@ -1054,7 +1088,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
     final c = context.c;
     final t = context.texts;
     final last = _lastBackup;
-    final summary = (last?['snapshot_summary'] as Map?)?.cast<String, dynamic>();
+    final summary =
+        (last?['snapshot_summary'] as Map?)?.cast<String, dynamic>();
     final modes = (last?['modes'] as List?)?.cast<String>() ?? const <String>[];
 
     return Column(
@@ -1081,7 +1116,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
               AppNotice(
                 tone: AppTone.warning,
                 title: 'Admin only',
-                message: 'Backups are written to this device’s private app folder. '
+                message:
+                    'Backups are written to this device’s private app folder. '
                     'Share them out to keep a copy off the phone — the device copy '
                     'is deleted if the app is uninstalled.',
               ),
@@ -1201,7 +1237,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
               children: [
                 const AppSpinner(size: 14),
                 const SizedBox(width: 8),
-                Text('Working…', style: t.bodySmall?.copyWith(color: c.fgMuted)),
+                Text('Working…',
+                    style: t.bodySmall?.copyWith(color: c.fgMuted)),
               ],
             ),
           ],
@@ -1243,9 +1280,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           decoration: BoxDecoration(
             color: active ? c.surface : Colors.transparent,
             borderRadius: BorderRadius.circular(Radii.md),
-            boxShadow: active
-                ? [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 4)]
-                : null,
+            boxShadow: active ? Shadows.sm : null,
           ),
           child: Text(
             label,
@@ -1415,7 +1450,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                 ),
                 const SizedBox(height: 10),
                 for (final f in (last['files'] as List?) ?? const [])
-                  if (f is Map) _fileRow(t, c, _text(f['name']), _num(f['size']).round()),
+                  if (f is Map)
+                    _fileRow(t, c, _text(f['name']), _num(f['size']).round()),
               ],
             ),
     );
@@ -1468,8 +1504,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                         Container(
                           width: 6,
                           height: 6,
-                          decoration:
-                              BoxDecoration(color: c.fgMuted, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                              color: c.fgMuted, shape: BoxShape.circle),
                         ),
                         const SizedBox(width: 8),
                         Expanded(
@@ -1487,9 +1523,11 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _statBox(t, c, 'Income', Fmt.money(result.income), c.success),
+                    _statBox(
+                        t, c, 'Income', Fmt.money(result.income), c.success),
                     const SizedBox(width: 8),
-                    _statBox(t, c, 'Expenses', Fmt.money(result.expenses), c.danger),
+                    _statBox(
+                        t, c, 'Expenses', Fmt.money(result.expenses), c.danger),
                     const SizedBox(width: 8),
                     _statBox(t, c, 'Net', Fmt.money(result.net),
                         result.net >= 0 ? c.success : c.danger),
@@ -1516,7 +1554,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                 const SizedBox(height: 10),
                 for (final f in (lastFiles(result)))
                   Text('${f.name} · ${_fmtBytes(f.size)}',
-                      style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
+                      style: const TextStyle(
+                          fontFamily: 'monospace', fontSize: 11)),
               ],
             ),
     );
@@ -1531,7 +1570,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
             ),
       ];
 
-  Widget _statBox(TextTheme t, AppColors c, String label, String value, Color tone) {
+  Widget _statBox(
+      TextTheme t, AppColors c, String label, String value, Color tone) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
@@ -1543,11 +1583,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              label.toUpperCase(),
-              style: t.labelSmall
-                  ?.copyWith(color: c.fgMuted, letterSpacing: 0.6, fontSize: 10),
-            ),
+            AppFieldLabel(label, opaque: true),
             const SizedBox(height: 2),
             FittedBox(
               child: Text(

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:love_mobi/nav/app_route.dart';
 import 'package:love_mobi/nav/route_registry.dart';
+import 'package:love_mobi/ui/shell/app_shell.dart';
 
 void main() {
   setUpAll(AppRouteRegistry.install);
@@ -100,6 +101,49 @@ void main() {
         AppRoutes.guestPickup,
       ]));
       expect(open.length, 5);
+    });
+  });
+
+  group('bottom bar selection', () {
+    List<AppRoute> tabs() => AppRoutes.table.values
+        .where((r) => r.bottomBar)
+        .toList()
+      ..sort((a, b) => (a.tabIndex ?? 99).compareTo(b.tabIndex ?? 99));
+
+    test('every tab owns its own index', () {
+      final list = tabs();
+      for (var i = 0; i < list.length; i++) {
+        expect(AppShell.selectedIndexFor(list, list[i].path), i,
+            reason: list[i].path);
+      }
+    });
+
+    test('a path outside the bar never yields a negative index', () {
+      // `NavigationBar` asserts `0 <= selectedIndex < destinations.length`,
+      // so the -1 that `indexWhere` returns for a non-tab path took down the
+      // whole shell. The admin dashboard is the path that did it in practice.
+      final list = tabs();
+      for (final path in <String>[
+        AppRoutes.dashboard,
+        AppRoutes.home,
+        AppRoutes.notifications,
+        '/management/reports',
+        '/gate-passes/9/slip',
+        '/nonsense',
+      ]) {
+        final index = AppShell.selectedIndexFor(list, path);
+        expect(index, greaterThanOrEqualTo(0), reason: path);
+        expect(index, lessThan(list.length), reason: path);
+      }
+    });
+
+    test('a detail page under a tab keeps that tab selected', () {
+      final list = tabs();
+      final quotations = list.firstWhere((r) => r.path == AppRoutes.quotations);
+      expect(
+        AppShell.selectedIndexFor(list, '${AppRoutes.quotations}/LL-9'),
+        list.indexOf(quotations),
+      );
     });
   });
 }

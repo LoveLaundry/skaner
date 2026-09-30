@@ -97,15 +97,15 @@ class _TrainingPageState extends State<TrainingPage> {
   Widget build(BuildContext context) {
     final services = AppScope.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Training'),
-        actions: [
-          AppExportButton(onExport: _export),
-          const SizedBox(width: 4),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Training',
+            actions: [
+              AppExportButton(onExport: _export),
+              const SizedBox(width: 4),
+            ],
+          ),
           AppSyncStatusBar(
             status: _categories.status,
             updatedAt: _categories.lastUpdated,

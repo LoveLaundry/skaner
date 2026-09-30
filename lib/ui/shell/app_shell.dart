@@ -34,8 +34,7 @@ class AppShell extends StatelessWidget {
                 border: Border(top: BorderSide(color: context.c.line)),
               ),
               child: NavigationBar(
-                selectedIndex: tabRoutes.indexWhere((r) =>
-                    _isCurrent(r.path, currentPath)),
+                selectedIndex: selectedIndexFor(tabRoutes, currentPath),
                 onDestinationSelected: (i) {
                   final target = tabRoutes[i].path;
                   if (_isCurrent(target, currentPath)) return;
@@ -53,6 +52,16 @@ class AppShell extends StatelessWidget {
               ),
             ),
     );
+  }
+
+  /// Tab that owns [currentPath], falling back to the first tab.
+  ///
+  /// `NavigationBar` asserts `0 <= selectedIndex < destinations.length`, so the
+  /// `-1` that [List.indexWhere] returns for a path outside the bar (the admin
+  /// dashboard, management, notifications, profile) crashed the whole shell.
+  static int selectedIndexFor(List<AppRoute> tabs, String current) {
+    final index = tabs.indexWhere((r) => _isCurrent(r.path, current));
+    return index < 0 ? 0 : index;
   }
 
   static bool _isCurrent(String routePath, String current) {

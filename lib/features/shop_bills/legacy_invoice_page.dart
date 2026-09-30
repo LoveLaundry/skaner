@@ -17,6 +17,7 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
+import '../quotations/print_paper.dart';
 import 'shop_bill_model.dart';
 
 /// Port of `features/shop-bills/pages/legacy-invoice-page.tsx`.
@@ -836,9 +837,9 @@ class _LegacySheet extends StatelessWidget {
   final Map<String, dynamic> invoice;
   final String signature;
 
-  static const _ink = Color(0xFF101828);
-  static const _muted = Color(0xFF98A2B3);
-  static const _rule = Color(0xFFE4E7EC);
+  static const _ink = Paper.ink;
+  static const _muted = Paper.muted;
+  static const _rule = Paper.rule;
 
   static List<Map<String, dynamic>> entriesOf(Map<String, dynamic> invoice) {
     final raw = pick(invoice, const ['entries']);

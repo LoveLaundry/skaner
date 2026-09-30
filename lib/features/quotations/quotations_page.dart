@@ -12,6 +12,7 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 import 'quotation_detail_page.dart';
 import 'quotation_form_page.dart';
 import 'quotation_model.dart';
@@ -188,19 +189,19 @@ class _QuotationsPageState extends State<QuotationsPage> {
     final canWrite = services.auth.hasPermission(quotationsReadPermission);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Quotations'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.refresh,
-            tooltip: 'Refresh',
-            loading: _controller.isLoading,
-            onPressed: _reload,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Quotations',
+            actions: [
+              AppButton.icon(
+                icon: Icons.refresh,
+                tooltip: 'Refresh',
+                loading: _controller.isLoading,
+                onPressed: _reload,
+              ),
+            ],
+          ),
           AppSyncStatusBar(
             status: _controller.status,
             updatedAt: _controller.lastUpdated,
@@ -387,7 +388,7 @@ class _QuotationsPageState extends State<QuotationsPage> {
           ? FloatingActionButton.extended(
               onPressed: _openCreate,
               backgroundColor: c.brand,
-              foregroundColor: Colors.white,
+              foregroundColor: c.onBrand,
               icon: const Icon(Icons.add),
               label: const Text('New quotation'),
             )

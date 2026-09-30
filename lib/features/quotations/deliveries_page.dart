@@ -9,6 +9,7 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 import 'bill_model.dart';
 import 'delivery_detail_page.dart';
 import 'delivery_form_page.dart';
@@ -213,26 +214,26 @@ class _DeliveriesPageState extends State<DeliveriesPage> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Deliveries'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.print_outlined,
-            tooltip: 'Print slips',
-            onPressed: () => Navigator.of(context).push<void>(
-              MaterialPageRoute(builder: (_) => const DeliverySlipsPage()),
-            ),
-          ),
-          AppButton.icon(
-            icon: Icons.refresh,
-            tooltip: 'Refresh',
-            loading: _deliveries.isLoading,
-            onPressed: _reload,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Deliveries',
+            actions: [
+              AppButton.icon(
+                icon: Icons.print_outlined,
+                tooltip: 'Print slips',
+                onPressed: () => Navigator.of(context).push<void>(
+                  MaterialPageRoute(builder: (_) => const DeliverySlipsPage()),
+                ),
+              ),
+              AppButton.icon(
+                icon: Icons.refresh,
+                tooltip: 'Refresh',
+                loading: _deliveries.isLoading,
+                onPressed: _reload,
+              ),
+            ],
+          ),
           AppSyncStatusBar(
             status: _deliveries.status,
             updatedAt: _deliveries.lastUpdated,
@@ -387,7 +388,7 @@ class _DeliveriesPageState extends State<DeliveriesPage> {
           ? FloatingActionButton.extended(
               onPressed: _openCreate,
               backgroundColor: context.c.brand,
-              foregroundColor: Colors.white,
+              foregroundColor: context.c.onBrand,
               icon: const Icon(Icons.add),
               label: const Text('Record delivery'),
             )

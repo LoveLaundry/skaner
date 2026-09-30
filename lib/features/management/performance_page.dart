@@ -156,15 +156,15 @@ class _PerformancePageState extends State<PerformancePage> {
   Widget build(BuildContext context) {
     final services = AppScope.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Performance'),
-        actions: [
-          AppExportButton(onExport: _export),
-          const SizedBox(width: 4),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Performance',
+            actions: [
+              AppExportButton(onExport: _export),
+              const SizedBox(width: 4),
+            ],
+          ),
           AppSyncStatusBar(
             status: _employees.status,
             updatedAt: _employees.lastUpdated,

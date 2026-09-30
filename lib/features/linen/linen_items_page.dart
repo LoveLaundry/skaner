@@ -143,24 +143,24 @@ class _LinenItemsPageState extends State<LinenItemsPage> {
     final loading = _controller.isLoading && rows.isEmpty;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Linen items'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.file_download_outlined,
-            tooltip: 'Copy as CSV',
-            onPressed: rows.isEmpty ? null : () => _export(rows),
-          ),
-          AppButton.icon(
-            icon: Icons.refresh,
-            tooltip: 'Refresh',
-            loading: _controller.isLoading,
-            onPressed: _reload,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Linen items',
+            actions: [
+              AppButton.icon(
+                icon: Icons.file_download_outlined,
+                tooltip: 'Copy as CSV',
+                onPressed: rows.isEmpty ? null : () => _export(rows),
+              ),
+              AppButton.icon(
+                icon: Icons.refresh,
+                tooltip: 'Refresh',
+                loading: _controller.isLoading,
+                onPressed: _reload,
+              ),
+            ],
+          ),
           AppSyncStatusBar(
             status: _controller.status,
             updatedAt: _controller.lastUpdated,

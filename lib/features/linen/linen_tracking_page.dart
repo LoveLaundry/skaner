@@ -14,6 +14,7 @@ import 'linen_items_page.dart';
 import 'linen_tracking_detail_page.dart';
 import 'scanner_page.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 
 /// The home of the linen module: the stock counters from `/linens` plus the two
 /// ways an operator gets to a piece — scan the tag, or type the code.
@@ -77,24 +78,24 @@ class _LinenTrackingPageState extends State<LinenTrackingPage> {
     final loading = _controller.isLoading && !_controller.hasData;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Linen'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.qr_code_scanner,
-            tooltip: 'Scan a tag',
-            onPressed: _openScanner,
-          ),
-          AppButton.icon(
-            icon: Icons.refresh,
-            tooltip: 'Refresh',
-            loading: _controller.isLoading,
-            onPressed: _reload,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Linen',
+            actions: [
+              AppButton.icon(
+                icon: Icons.qr_code_scanner,
+                tooltip: 'Scan a tag',
+                onPressed: _openScanner,
+              ),
+              AppButton.icon(
+                icon: Icons.refresh,
+                tooltip: 'Refresh',
+                loading: _controller.isLoading,
+                onPressed: _reload,
+              ),
+            ],
+          ),
           AppSyncStatusBar(
             status: _controller.status,
             updatedAt: _controller.lastUpdated,

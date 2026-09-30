@@ -13,6 +13,7 @@ import '../quotations/shared_widgets.dart';
 import '_linen_shared.dart';
 import 'linen_flow_hotel_page.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 
 /// Port of `features/quotations/pages/hotel-linen-flow-page.tsx`.
 ///
@@ -144,19 +145,19 @@ class _LinenFlowPageState extends State<LinenFlowPage> {
     final loading = _controller.isLoading && !_controller.hasData;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hotel linen flow'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.refresh,
-            tooltip: 'Refresh',
-            loading: _controller.isLoading,
-            onPressed: _reload,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Hotel linen flow',
+            actions: [
+              AppButton.icon(
+                icon: Icons.refresh,
+                tooltip: 'Refresh',
+                loading: _controller.isLoading,
+                onPressed: _reload,
+              ),
+            ],
+          ),
           AppSyncStatusBar(
             status: _controller.status,
             updatedAt: _controller.lastUpdated,

@@ -356,7 +356,7 @@ class _ShopBillsPageState extends State<ShopBillsPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _openCreate,
         backgroundColor: c.brand,
-        foregroundColor: Colors.white,
+        foregroundColor: c.onBrand,
         icon: const Icon(Icons.add),
         label: const Text('New bill'),
       ),

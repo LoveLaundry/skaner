@@ -87,9 +87,11 @@ class _ManagementDashboardPageState extends State<ManagementDashboardPage> {
   Widget build(BuildContext context) {
     final services = AppScope.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Management')),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Management',
+          ),
           AppSyncStatusBar(
             status: _controller.status,
             updatedAt: _controller.lastUpdated,

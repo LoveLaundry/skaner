@@ -7,6 +7,13 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/theme.dart';
 
+/// Domain-local parallel to `ui/kit`: quotations-scoped widgets (the four
+/// status badges, ops card family, print-slip helpers). Kept here rather than
+/// merged into the kit on purpose — they encode quotations/status semantics
+/// used across 20+ screens, and a kit merge risks silent regressions on those
+/// surfaces without visual verification. All shared visuals (colors, radii,
+/// shadows, text) are consumed from `ui/kit` + `ui/theme`, never re-invented.
+
 /// The shared "you cannot see this" surface. Every screen in the feature gates
 /// itself on one permission string, the way the web sidebar does.
 Widget opsNotPermitted(String feature) => AppErrorState(
@@ -219,14 +226,7 @@ class OpsSectionList<T> extends StatelessWidget {
                       size: 13, color: section.tone.dot(context.c)),
                   const SizedBox(width: 6),
                 ],
-                Text(
-                  section.label.toUpperCase(),
-                  style: context.texts.labelSmall?.copyWith(
-                    color: context.c.fgMuted,
-                    fontSize: 10.5,
-                    letterSpacing: 0.6,
-                  ),
-                ),
+                AppFieldLabel(section.label, opaque: true),
                 const SizedBox(width: 7),
                 Container(
                   padding:

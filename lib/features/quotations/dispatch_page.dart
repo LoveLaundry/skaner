@@ -11,6 +11,7 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 import 'bill_model.dart';
 import 'dispatch_detail_page.dart';
 import 'quotation_model.dart';
@@ -129,24 +130,24 @@ class _DispatchPageState extends State<DispatchPage> {
     final all = _jobs.data ?? const <DispatchJob>[];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dispatch & pickups'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.route_outlined,
-            tooltip: 'Plan route',
-            onPressed: _openRoutePlanner,
-          ),
-          AppButton.icon(
-            icon: Icons.refresh,
-            tooltip: 'Refresh',
-            loading: _jobs.isLoading,
-            onPressed: _reload,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Dispatch & pickups',
+            actions: [
+              AppButton.icon(
+                icon: Icons.route_outlined,
+                tooltip: 'Plan route',
+                onPressed: _openRoutePlanner,
+              ),
+              AppButton.icon(
+                icon: Icons.refresh,
+                tooltip: 'Refresh',
+                loading: _jobs.isLoading,
+                onPressed: _reload,
+              ),
+            ],
+          ),
           AppSyncStatusBar(
             status: _jobs.status,
             updatedAt: _jobs.lastUpdated,
@@ -242,7 +243,7 @@ class _DispatchPageState extends State<DispatchPage> {
           ? FloatingActionButton.extended(
               onPressed: _openCreate,
               backgroundColor: context.c.brand,
-              foregroundColor: Colors.white,
+              foregroundColor: context.c.onBrand,
               icon: const Icon(Icons.add),
               label: const Text('New job'),
             )

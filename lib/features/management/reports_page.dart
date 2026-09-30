@@ -120,32 +120,15 @@ class _ReportsPageState extends State<ReportsPage>
   Widget build(BuildContext context) {
     final services = AppScope.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Reports'),
-        actions: [
-          AppExportButton(onExport: _export),
-          const SizedBox(width: 4),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(46),
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: AppTabs(
-              index: _index,
-              onChanged: (i) => _tabs.index = i,
-              tabs: const [
-                AppTabItem('Profit & loss', icon: Icons.trending_up_rounded),
-                AppTabItem('Daily', icon: Icons.today_outlined),
-                AppTabItem('Monthly', icon: Icons.calendar_month_outlined),
-                AppTabItem('Outstanding',
-                    icon: Icons.account_balance_wallet_outlined),
-              ],
-            ),
-          ),
-        ),
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Reports',
+            actions: [
+              AppExportButton(onExport: _export),
+              const SizedBox(width: 4),
+            ],
+          ),
           AppSyncStatusBar(
             status: _controller.status,
             updatedAt: _controller.lastUpdated,

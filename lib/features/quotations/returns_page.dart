@@ -12,6 +12,7 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 import 'bill_model.dart';
 import 'quotation_model.dart';
 import 'return_detail_page.dart';
@@ -141,19 +142,19 @@ class _ReturnsPageState extends State<ReturnsPage> {
     final loading = _returns.isLoading && all.isEmpty;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Returns'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.refresh,
-            tooltip: 'Refresh',
-            loading: _returns.isLoading,
-            onPressed: _reload,
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Returns',
+            actions: [
+              AppButton.icon(
+                icon: Icons.refresh,
+                tooltip: 'Refresh',
+                loading: _returns.isLoading,
+                onPressed: _reload,
+              ),
+            ],
+          ),
           AppSyncStatusBar(
             status: _returns.status,
             updatedAt: _returns.lastUpdated,
@@ -209,7 +210,7 @@ class _ReturnsPageState extends State<ReturnsPage> {
           ? FloatingActionButton.extended(
               onPressed: _openCreate,
               backgroundColor: context.c.brand,
-              foregroundColor: Colors.white,
+              foregroundColor: context.c.onBrand,
               icon: const Icon(Icons.add),
               label: const Text('Record return'),
             )
@@ -368,13 +369,13 @@ class _ReturnCard extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 4, vertical: 1),
                           decoration: BoxDecoration(
-                            color: c.fgMuted,
+                            color: c.surface3,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             line.specification,
-                            style: context.texts.bodySmall
-                                ?.copyWith(fontSize: 9, color: Colors.white),
+                            style: context.texts.bodySmall?.copyWith(
+                                fontSize: 9, color: c.fg2),
                           ),
                         ),
                       ],

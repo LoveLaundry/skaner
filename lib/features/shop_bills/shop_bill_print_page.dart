@@ -12,6 +12,7 @@ import '../../state/app_scope.dart';
 import '../../ui/kit/feedback.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/theme.dart';
+import '../quotations/print_paper.dart';
 import 'shop_bill_model.dart';
 
 /// A print-optimised shop bill.
@@ -204,9 +205,9 @@ class _PrintSheet extends StatelessWidget {
 
   final Map<String, dynamic> bill;
 
-  static const _ink = Color(0xFF111827);
-  static const _muted = Color(0xFF6B7280);
-  static const _rule = Color(0xFFE5E7EB);
+  static const _ink = Paper.ink;
+  static const _muted = Paper.muted;
+  static const _rule = Paper.rule;
 
   @override
   Widget build(BuildContext context) {

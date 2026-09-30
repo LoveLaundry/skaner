@@ -94,10 +94,10 @@ class _UsersPageState extends State<UsersPage> {
     final t = context.texts;
     final rows = _users.data ?? const <Map<String, dynamic>>[];
     final writable = AppScope.read(context).auth.hasPermission('users.write');
-    final active = rows.where((u) => str(u, ['status']).toLowerCase() == 'active').length;
-    final admins = rows
-        .where((u) => str(u, ['role_id']).toUpperCase() == 'ADMIN')
-        .length;
+    final active =
+        rows.where((u) => str(u, ['status']).toLowerCase() == 'active').length;
+    final admins =
+        rows.where((u) => str(u, ['role_id']).toUpperCase() == 'ADMIN').length;
 
     return Column(
       children: [
@@ -130,7 +130,9 @@ class _UsersPageState extends State<UsersPage> {
                   Expanded(
                     child: _count(
                         'Total Users',
-                        _users.isLoading && rows.isEmpty ? '—' : '${rows.length}',
+                        _users.isLoading && rows.isEmpty
+                            ? '—'
+                            : '${rows.length}',
                         c.fg),
                   ),
                   const SizedBox(width: 10),
@@ -182,14 +184,15 @@ class _UsersPageState extends State<UsersPage> {
                         : box.maxWidth > 580
                             ? 2
                             : 1;
-                    final width =
-                        (box.maxWidth - (columns - 1) * 10) / columns;
+                    final width = (box.maxWidth - (columns - 1) * 10) / columns;
                     return Wrap(
                       spacing: 10,
                       runSpacing: 10,
                       children: [
                         for (final u in rows)
-                          SizedBox(width: width, child: _userCard(u, t, c, writable)),
+                          SizedBox(
+                              width: width,
+                              child: _userCard(u, t, c, writable)),
                       ],
                     );
                   },
@@ -201,8 +204,8 @@ class _UsersPageState extends State<UsersPage> {
     );
   }
 
-  Widget _userCard(Map<String, dynamic> u, TextTheme t, AppColors c,
-      bool writable) {
+  Widget _userCard(
+      Map<String, dynamic> u, TextTheme t, AppColors c, bool writable) {
     final name = str(u, ['user_name'], 'Unnamed user');
     final role = str(u, ['role_id'], 'STAFF').toUpperCase();
     final status = str(u, ['status'], 'unset').toLowerCase();
@@ -295,7 +298,9 @@ class _UsersPageState extends State<UsersPage> {
                   style: sheet.texts.titleMedium),
               const SizedBox(height: 2),
               Text(
-                '@${str(u, ['auth_id'], '—')} · ${str(u, ['role_id']).toUpperCase()}',
+                '@${str(u, [
+                      'auth_id'
+                    ], '—')} · ${str(u, ['role_id']).toUpperCase()}',
                 style: sheet.texts.bodySmall?.copyWith(color: c.fgMuted),
               ),
               const SizedBox(height: 16),
@@ -303,8 +308,12 @@ class _UsersPageState extends State<UsersPage> {
               _row(sheet, 'Mobile', str(u, ['mobile_number'], '—')),
               _row(sheet, 'Employee ID', str(u, ['employee_id'], '—')),
               _row(sheet, 'Status', str(u, ['status'], '—')),
-              _row(sheet, 'Created',
-                  pick(u, ['created_at']) == null ? '—' : Fmt.dateTime(u['created_at'])),
+              _row(
+                  sheet,
+                  'Created',
+                  pick(u, ['created_at']) == null
+                      ? '—'
+                      : Fmt.dateTime(u['created_at'])),
               if (str(u, ['bio_data']).isNotEmpty)
                 _row(sheet, 'Bio', str(u, ['bio_data'])),
               const SizedBox(height: 16),
@@ -322,15 +331,12 @@ class _UsersPageState extends State<UsersPage> {
   }
 
   Widget _row(BuildContext sheet, String label, String value) {
-    final c = sheet.c;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label.toUpperCase(),
-              style: sheet.texts.labelSmall
-                  ?.copyWith(color: c.fgFaint, fontSize: 10, letterSpacing: 0.6)),
+          AppFieldLabel(label),
           const SizedBox(height: 1),
           Text(value, style: sheet.texts.bodyMedium),
         ],
@@ -348,8 +354,10 @@ class _UsersPageState extends State<UsersPage> {
     final authId = TextEditingController(text: str(user ?? {}, ['auth_id']));
     final password = TextEditingController();
     final email = TextEditingController(text: str(user ?? {}, ['email']));
-    final mobile = TextEditingController(text: str(user ?? {}, ['mobile_number']));
-    final employee = TextEditingController(text: str(user ?? {}, ['employee_id']));
+    final mobile =
+        TextEditingController(text: str(user ?? {}, ['mobile_number']));
+    final employee =
+        TextEditingController(text: str(user ?? {}, ['employee_id']));
     var role = str(user ?? {}, ['role_id'], 'STAFF').toUpperCase();
     var status = str(user ?? {}, ['status'], 'active').toLowerCase();
     var reveal = false;
@@ -369,7 +377,8 @@ class _UsersPageState extends State<UsersPage> {
                       ? 'Update this system user'
                       : 'Add a new system user. They can sign in immediately with '
                           'the username and password you set.',
-                  style: dialog.texts.bodySmall?.copyWith(color: dialog.c.fgMuted),
+                  style:
+                      dialog.texts.bodySmall?.copyWith(color: dialog.c.fgMuted),
                 ),
                 if (error != null) ...[
                   const SizedBox(height: 12),
@@ -516,8 +525,7 @@ class _UsersPageState extends State<UsersPage> {
       'status': status,
       if (email.text.trim().isNotEmpty) 'email': email.text.trim(),
       if (mobile.text.trim().isNotEmpty) 'mobile_number': mobile.text.trim(),
-      if (employee.text.trim().isNotEmpty)
-        'employee_id': employee.text.trim(),
+      if (employee.text.trim().isNotEmpty) 'employee_id': employee.text.trim(),
     };
     final id = str(user ?? {}, ['id']);
     final newPassword = password.text;
@@ -551,8 +559,8 @@ class _UsersPageState extends State<UsersPage> {
         AppToast.warning(
             context, 'Saved locally — it will reach the server when online');
       } else {
-        AppToast.success(
-            context, editing ? 'User "$userName" updated' : 'User "$userName" created');
+        AppToast.success(context,
+            editing ? 'User "$userName" updated' : 'User "$userName" created');
       }
     } on ApiException catch (e) {
       if (mounted) AppToast.error(context, e.message);
@@ -575,8 +583,8 @@ class _UsersPageState extends State<UsersPage> {
   Widget _statusPicker(String value, ValueChanged<String> onChanged) =>
       _pillPicker(_statuses, value, onChanged);
 
-  Widget _pillPicker(List<String> options, String value,
-      ValueChanged<String> onChanged) {
+  Widget _pillPicker(
+      List<String> options, String value, ValueChanged<String> onChanged) {
     final c = context.c;
     return Wrap(
       spacing: 6,

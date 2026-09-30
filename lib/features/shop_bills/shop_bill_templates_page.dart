@@ -148,7 +148,7 @@ class _ShopBillTemplatesPageState extends State<ShopBillTemplatesPage> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openEditor(null),
         backgroundColor: c.brand,
-        foregroundColor: Colors.white,
+        foregroundColor: c.onBrand,
         icon: const Icon(Icons.add),
         label: const Text('New template'),
       ),

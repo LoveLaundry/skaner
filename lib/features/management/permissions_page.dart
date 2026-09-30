@@ -7,6 +7,7 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
+import '../../ui/kit/data.dart';
 
 /// There is no management permissions endpoint and no permission editor in the
 /// web app. Permissions arrive as a grant list on the signed-in user, so this
@@ -34,9 +35,11 @@ class _PermissionsPageState extends State<PermissionsPage> {
       ..sort();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Permissions')),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Permissions',
+          ),
           AppOfflineSyncBar(engine: services.sync),
           Expanded(
             child: ListView(

@@ -384,7 +384,8 @@ class _TagToggle extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 9),
                   decoration: BoxDecoration(
-                    color: value == option.$1 ? c.surface : Colors.transparent,
+                    color:
+                        value == option.$1 ? c.surface : c.surfaceSunken,
                     borderRadius: BorderRadius.circular(Radii.md),
                     border: Border.all(
                       color: value == option.$1 ? c.brand : Colors.transparent,

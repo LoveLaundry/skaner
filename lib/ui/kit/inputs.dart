@@ -7,6 +7,36 @@ import 'package:flutter/services.dart';
 import '../theme.dart';
 import 'primitives.dart';
 
+/// A stat/field caption: uppercase, letter-spaced, muted.
+///
+/// Replaces the hand-rolled `labelSmall.copyWith(color, fontSize: 10,
+/// letterSpacing: 0.6)` that three screens duplicated. Defaults read as the
+/// smallest caption on a card; pass [color] to override (e.g. an accent).
+class AppFieldLabel extends StatelessWidget {
+  const AppFieldLabel(this.label, {super.key, this.color, this.opaque = false});
+
+  final String label;
+  final Color? color;
+  final bool opaque;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.c;
+    final t = context.texts;
+    final base = t.labelSmall?.copyWith(
+      color: color ?? (opaque ? c.fgMuted : c.fgFaint),
+      fontSize: 10,
+      letterSpacing: 0.6,
+    );
+    return Text(
+      label.toUpperCase(),
+      style: base,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+}
+
 /// Port of `components/ui/field.tsx`: label, control, hint, error.
 /// The hint is replaced by the error so the block never grows when validation
 /// fires.

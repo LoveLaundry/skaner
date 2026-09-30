@@ -141,10 +141,9 @@ class _WorkerFormPageState extends State<WorkerFormPage> {
           // The web app writes worker edits with PUT; the service only answers
           // to that verb.
           ? await services.api.put(
-              ServiceNames.workers, '/workers/${widget.workerId}',
-              body: body)
-          : await services.api.post(ServiceNames.workers, '/workers',
-              body: body);
+              ServiceNames.workers, '/workers/${widget.workerId}', body: body)
+          : await services.api
+              .post(ServiceNames.workers, '/workers', body: body);
       if (!mounted) return;
       if (result is QueuedResponse) {
         AppToast.info(context, 'Offline — change queued and will sync');

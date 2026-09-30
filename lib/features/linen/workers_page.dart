@@ -134,34 +134,27 @@ class _WorkersPageState extends State<WorkersPage> {
     final loading = _controller.isLoading && _all.isEmpty;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Staff'),
-        actions: [
-          AppButton.icon(
-            icon: Icons.payments_outlined,
-            tooltip: 'Payroll',
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                  builder: (_) => const WorkerPayrollPage()),
-            ),
-          ),
-          AppButton.icon(
-            icon: Icons.refresh,
-            tooltip: 'Refresh',
-            loading: _controller.isLoading,
-            onPressed: _reload,
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openCreate,
-        icon: const Icon(Icons.add),
-        label: const Text('Add staff'),
-        backgroundColor: c.brand,
-        foregroundColor: Colors.white,
-      ),
       body: Column(
         children: [
+          AppPageHeader(
+            title: 'Staff',
+            actions: [
+              AppButton.icon(
+                icon: Icons.payments_outlined,
+                tooltip: 'Payroll',
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                      builder: (_) => const WorkerPayrollPage()),
+                ),
+              ),
+              AppButton.icon(
+                icon: Icons.refresh,
+                tooltip: 'Refresh',
+                loading: _controller.isLoading,
+                onPressed: _reload,
+              ),
+            ],
+          ),
           AppSyncStatusBar(
             status: _controller.status,
             updatedAt: _controller.lastUpdated,
