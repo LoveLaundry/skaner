@@ -65,7 +65,10 @@ class LinenService {
       );
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        return List<Map<String, dynamic>>.from(data);
+        final items = data is List ? data : data['items'];
+        if (items is List) {
+          return items.whereType<Map>().map((item) => Map<String, dynamic>.from(item)).toList();
+        }
       }
       return [];
     } catch (e) {

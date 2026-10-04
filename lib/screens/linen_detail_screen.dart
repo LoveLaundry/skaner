@@ -76,6 +76,9 @@ class _LinenDetailScreenState extends State<LinenDetailScreen> {
   List<_QuickAction> _getAvailableActions() {
     final status = linen.status;
     switch (status) {
+      case 'IN_STOCK':
+      case 'AT_CLIENT':
+        return [_QuickAction('Collect', Icons.local_laundry_service, 'collect')];
       case 'COLLECTED':
         return [_QuickAction('Receive', Icons.inbox, 'receive')];
       case 'AT_LAUNDRY':
