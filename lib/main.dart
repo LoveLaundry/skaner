@@ -1,89 +1,42 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'services/auth_service.dart';
-import 'screens/login_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/scanner_screen.dart';
-import 'screens/linen_detail_screen.dart';
-import 'screens/garment_detail_screen.dart';
-import 'models/linen.dart';
-import 'models/garment_tag.dart';
+import 'package:flutter/services.dart';
 
-void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (_) => AuthService(),
-      child: const LoveMobiApp(),
-    ),
-  );
+import 'nav/app_router.dart';
+import 'nav/route_registry.dart';
+import 'state/app_services.dart';
+import 'ui/kit/toast.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+  AppRouteRegistry.install();
+  final services = await AppServices.boot();
+  runApp(LoveLaundryApp(services: services));
 }
 
-class LoveMobiApp extends StatelessWidget {
-  const LoveMobiApp({super.key});
+class LoveLaundryApp extends StatelessWidget {
+  const LoveLaundryApp({super.key, required this.services});
+
+  final AppServices services;
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Love Mobi',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: Colors.grey,
-        brightness: Brightness.light,
-      ),
-      home: const AuthGate(),
-      routes: {
-        '/login': (_) => const LoginScreen(),
-        '/home': (_) => const HomeScreen(),
-        '/scanner': (ctx) {
-          final mode = ModalRoute.of(ctx)?.settings.arguments as String?;
-          return ScannerScreen(mode: mode);
-        },
-        '/linen-detail': (ctx) {
-          final linen = ModalRoute.of(ctx)!.settings.arguments as LinenItem;
-          return LinenDetailScreen(linen: linen);
-        },
-        '/garment-detail': (ctx) {
-          final tag = ModalRoute.of(ctx)!.settings.arguments as GarmentTag;
-          return GarmentDetailScreen(tag: tag);
-        },
+    return ListenableBuilder(
+      listenable: services.theme,
+      builder: (context, _) {
+        return MaterialApp(
+          title: 'Love Laundry Ops',
+          debugShowCheckedModeBanner: false,
+          theme: services.theme.materialTheme,
+          builder: (context, child) => ToastHost(child: child!),
+          home: AppRouter(services: services),
+        );
       },
     );
   }
 }
 
-class AuthGate extends StatefulWidget {
-  const AuthGate({super.key});
-
-  @override
-  State<AuthGate> createState() => _AuthGateState();
-}
-
-class _AuthGateState extends State<AuthGate> {
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
-
-  Future<void> _init() async {
-    final auth = context.read<AuthService>();
-    final loggedIn = await auth.tryAutoLogin();
-    if (!mounted) return;
-
-    if (loggedIn) {
-      Navigator.of(context).pushReplacementNamed('/home');
-    } else {
-      Navigator.of(context).pushReplacementNamed('/login');
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-}
+// PROBE-TRACKED-EDIT 1790597481
