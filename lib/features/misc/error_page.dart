@@ -123,7 +123,7 @@ class ErrorPage extends StatelessWidget {
                             'PAGE',
                             style: t.labelSmall?.copyWith(
                               color: c.fgFaint,
-                              fontSize: 10,
+                              fontSize: context.fs(10),
                               letterSpacing: 0.8,
                             ),
                           ),

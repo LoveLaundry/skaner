@@ -442,7 +442,7 @@ class _AiInsightsPageState extends State<AiInsightsPage> {
                     getTooltipItems: (touched) => touched.map((s) {
                       return LineTooltipItem(
                         'Rs. ${s.y.toStringAsFixed(0)}',
-                        TextStyle(color: c.surface, fontSize: 11),
+                        TextStyle(color: c.surface, fontSize: context.fs(11)),
                       );
                     }).toList(),
                   ),
@@ -565,12 +565,12 @@ class _AiInsightsPageState extends State<AiInsightsPage> {
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
                 getTooltipColor: (_) => c.fg,
-                getTooltipItems: (touched) => touched.map((s) {
-                  return LineTooltipItem(
-                    'Rs. ${s.y.toStringAsFixed(0)}',
-                    TextStyle(color: c.surface, fontSize: 11),
-                  );
-                }).toList(),
+                  getTooltipItems: (touched) => touched.map((s) {
+                      return LineTooltipItem(
+                        'Rs. ${s.y.toStringAsFixed(0)}',
+                        TextStyle(color: c.surface, fontSize: context.fs(11)),
+                      );
+                    }).toList(),
               ),
             ),
             lineBarsData: [

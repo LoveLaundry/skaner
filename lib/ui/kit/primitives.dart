@@ -189,9 +189,9 @@ class _AppButtonState extends State<AppButton> {
           padding: v == AppButtonVariant.link
               ? EdgeInsets.zero
               : EdgeInsets.symmetric(horizontal: s.padX * scale),
-          height: s == AppButtonSize.lg && widget.dense
+          height: (s == AppButtonSize.lg && widget.dense
               ? s.height - 4
-              : s.height,
+              : s.height) * scale,
           alignment: Alignment.center,
           child: Row(
             mainAxisSize: widget.block || widget.expand
@@ -320,13 +320,13 @@ class AppBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: compact ? 10 : 12, color: fgOut),
+            Icon(icon, size: context.fs(compact ? 10 : 12), color: fgOut),
             const SizedBox(width: 4),
           ],
           Text(
             label,
             style: TextStyle(
-              fontSize: compact ? 10.5 : 11.5,
+              fontSize: context.fs(compact ? 10.5 : 11.5),
               fontWeight: FontWeight.w600,
               color: fgOut,
               height: 1.35,

@@ -512,7 +512,7 @@ class AppToast {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(message,
-                    style: TextStyle(color: c.surface, fontSize: 13.5)),
+                    style: TextStyle(color: c.surface, fontSize: context.fs(13.5))),
               ),
             ],
           ),

@@ -180,7 +180,7 @@ class _LoginPageState extends State<LoginPage> {
                             'Sign-in needs a connection. Everything after it works '
                             'offline and syncs when you are back in range.',
                             style: t.bodySmall
-                                ?.copyWith(color: c.fgFaint, fontSize: 11.5),
+                                ?.copyWith(color: c.fgFaint, fontSize: context.fs(11.5)),
                           ),
                         ),
                       ],

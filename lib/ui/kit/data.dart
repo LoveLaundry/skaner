@@ -576,13 +576,13 @@ class _Row<T> extends StatelessWidget {
                               Text(
                                 col.label,
                                 style: t.labelSmall
-                                    ?.copyWith(color: c.fgFaint, fontSize: 10.5),
+                                    ?.copyWith(color: c.fgFaint, fontSize: context.fs(10.5)),
                               ),
                               const SizedBox(height: 1),
                               Text(
                                 col.value(row),
                                 style: t.bodySmall
-                                    ?.copyWith(color: c.fg2, fontSize: 12),
+                                    ?.copyWith(color: c.fg2, fontSize: context.fs(12)),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),

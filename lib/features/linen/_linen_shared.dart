@@ -321,7 +321,7 @@ class _SectionLabel extends StatelessWidget {
           text.toUpperCase(),
           style: context.texts.labelSmall?.copyWith(
             color: context.c.fgMuted,
-            fontSize: 10.5,
+            fontSize: context.fs(10.5),
             letterSpacing: 0.6,
           ),
         ),
@@ -358,7 +358,7 @@ class LinenDetailGrid extends StatelessWidget {
                     Text(
                       label.toUpperCase(),
                       style: t.labelSmall
-                          ?.copyWith(color: c.fgFaint, fontSize: 10.5),
+                          ?.copyWith(color: c.fgFaint, fontSize: context.fs(10.5)),
                     ),
                     const SizedBox(height: 2),
                     Text(value, style: t.bodyMedium?.copyWith(color: c.fg)),
@@ -450,7 +450,7 @@ class LinenTimeline extends StatelessWidget {
                             if (events[i].location != null) events[i].location!,
                           ].join(' · '),
                           style: t.bodySmall
-                              ?.copyWith(color: c.fgMuted, fontSize: 11.5),
+                              ?.copyWith(color: c.fgMuted, fontSize: context.fs(11.5)),
                         ),
                         if (events[i].notes != null &&
                             events[i].notes!.trim().isNotEmpty)

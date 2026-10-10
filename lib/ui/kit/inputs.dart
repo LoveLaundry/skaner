@@ -25,7 +25,7 @@ class AppFieldLabel extends StatelessWidget {
     final t = context.texts;
     final base = t.labelSmall?.copyWith(
       color: color ?? (opaque ? c.fgMuted : c.fgFaint),
-      fontSize: 10,
+      fontSize: context.fs(10),
       letterSpacing: 0.6,
     );
     return Text(
@@ -102,14 +102,14 @@ class AppField extends StatelessWidget {
               const SizedBox(width: 4),
               Expanded(
                 child: Text(error!,
-                    style: t.bodySmall?.copyWith(color: c.danger, fontSize: 11.5)),
+                    style: t.bodySmall?.copyWith(color: c.danger, fontSize: context.fs(11.5))),
               ),
             ],
           ),
         ] else if (hint != null) ...[
           const SizedBox(height: 5),
           Text(hint!,
-              style: t.bodySmall?.copyWith(color: c.fgFaint, fontSize: 11.5)),
+              style: t.bodySmall?.copyWith(color: c.fgFaint, fontSize: context.fs(11.5))),
         ],
       ],
     );

@@ -886,8 +886,8 @@ class _StopIndex extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 24,
-      height: 24,
+      width: context.fs(24),
+      height: context.fs(24),
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: context.c.brand,
@@ -895,9 +895,9 @@ class _StopIndex extends StatelessWidget {
       ),
       child: Text(
         '$index',
-        style: const TextStyle(
+        style: TextStyle(
           color: Colors.white,
-          fontSize: 11,
+          fontSize: context.fs(11),
           fontWeight: FontWeight.w700,
         ),
       ),

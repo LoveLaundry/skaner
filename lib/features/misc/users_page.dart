@@ -604,7 +604,7 @@ class _UsersPageState extends State<UsersPage> {
               child: Text(
                 o,
                 style: TextStyle(
-                  fontSize: 12.5,
+                  fontSize: context.fs(12.5),
                   fontWeight: o == value ? FontWeight.w600 : FontWeight.w500,
                   color: o == value ? c.brandText : c.fg3,
                 ),

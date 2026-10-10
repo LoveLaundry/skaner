@@ -1204,7 +1204,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 '${Fmt.money(s.y)}\n${bills ? str(series[s.spotIndex], [
                         'label'
                       ]) : ''}',
-                TextStyle(color: c.surface, fontSize: 11),
+                TextStyle(color: c.surface, fontSize: context.fs(11)),
               );
             }).toList(),
           ),

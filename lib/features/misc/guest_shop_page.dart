@@ -158,7 +158,7 @@ class _GuestShopPageState extends State<GuestShopPage> {
           '${CompanyInfo.name.toUpperCase()} · REG. NO. ${CompanyInfo.registrationNo}',
           style: t.labelSmall?.copyWith(
             color: c.fgFaint,
-            fontSize: 10.5,
+            fontSize: context.fs(10.5),
             letterSpacing: 0.8,
           ),
         ),

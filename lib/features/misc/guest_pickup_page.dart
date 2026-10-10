@@ -445,26 +445,26 @@ class _GuestPickupPageState extends State<GuestPickupPage> {
                       Text(
                         Fmt.time(at),
                         style: t.labelSmall
-                            ?.copyWith(color: c.fgFaint, fontSize: 10.5),
+                            ?.copyWith(color: c.fgFaint, fontSize: context.fs(10.5)),
                       ),
                     if (pending) ...[
                       const SizedBox(width: 6),
-                      Icon(Icons.schedule_rounded, size: 11, color: c.fgFaint),
+                      Icon(Icons.schedule_rounded, size: context.fs(11), color: c.fgFaint),
                       const SizedBox(width: 2),
                       Text('Sending',
                           style: t.labelSmall
-                              ?.copyWith(color: c.fgFaint, fontSize: 10.5)),
+                              ?.copyWith(color: c.fgFaint, fontSize: context.fs(10.5))),
                     ],
                     if (queued.isNotEmpty) ...[
                       const SizedBox(width: 6),
                       Icon(Icons.cloud_upload_outlined,
-                          size: 11, color: c.warning),
+                          size: context.fs(11), color: c.warning),
                       const SizedBox(width: 2),
                       Flexible(
                         child: Text(
                           queued,
                           style: t.labelSmall
-                              ?.copyWith(color: c.warning, fontSize: 10.5),
+                              ?.copyWith(color: c.warning, fontSize: context.fs(10.5)),
                         ),
                       ),
                     ],

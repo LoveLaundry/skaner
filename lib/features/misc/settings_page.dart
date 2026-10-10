@@ -563,7 +563,7 @@ class _SettingsPageState extends State<SettingsPage> {
           Text(
             label.toUpperCase(),
             style: t.labelSmall?.copyWith(
-                color: c.fgFaint, fontSize: 9.5, letterSpacing: 0.6),
+                color: c.fgFaint, fontSize: context.fs(9.5), letterSpacing: 0.6),
           ),
           const SizedBox(height: 2),
           Text(

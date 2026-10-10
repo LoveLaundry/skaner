@@ -234,7 +234,7 @@ class AppDrawer extends StatelessWidget {
                         entry.key.toUpperCase(),
                         style: t.labelSmall?.copyWith(
                           color: c.sidebarLabel,
-                          fontSize: 10,
+                          fontSize: context.fs(10),
                           letterSpacing: 0.8,
                         ),
                       ),
@@ -250,6 +250,47 @@ class AppDrawer extends StatelessWidget {
                       ),
                   ],
                 ],
+              ),
+            ),
+            // Comfort text — one tap, easy for elders
+            InkWell(
+              onTap: () {
+                final theme = services.theme;
+                theme.setFontSize(theme.fontSize.isComfort
+                    ? AppFontSize.md
+                    : AppFontSize.xxxl);
+              },
+              child: Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  border: Border(top: BorderSide(color: c.sidebarBorder)),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      services.theme.fontSize.isComfort
+                          ? Icons.text_increase
+                          : Icons.text_fields_outlined,
+                      size: 20,
+                      color: c.sidebarLabel,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Comfort text',
+                        style: t.labelMedium
+                            ?.copyWith(color: c.sidebarText),
+                      ),
+                    ),
+                    Switch(
+                      value: services.theme.fontSize.isComfort,
+                      onChanged: (on) => services.theme.setFontSize(
+                          on ? AppFontSize.xxxl : AppFontSize.md),
+                    ),
+                  ],
+                ),
               ),
             ),
             // Sync foot

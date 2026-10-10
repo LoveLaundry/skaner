@@ -1225,7 +1225,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           Text(
             'JSON backups are gzipped (.json.gz), checksummed per source, and '
             'round-trip verified before saving.',
-            style: t.bodySmall?.copyWith(color: c.fgMuted, fontSize: 11),
+            style: t.bodySmall?.copyWith(color: c.fgMuted, fontSize: context.fs(11)),
           ),
           if (_log.isNotEmpty) ...[
             const SizedBox(height: 12),
@@ -1370,7 +1370,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
             children: [
               Text(label, style: t.bodyMedium),
               Text(_monthMode ? 'Change' : 'Change',
-                  style: t.bodySmall?.copyWith(color: c.fgMuted, fontSize: 11)),
+                  style: t.bodySmall?.copyWith(color: c.fgMuted, fontSize: context.fs(11))),
             ],
           ),
         ),
@@ -1404,9 +1404,9 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
               padding: const EdgeInsets.only(bottom: 2),
               child: Text(
                 '${(e.key + 1).toString().padLeft(2, '0')} ${e.value}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'monospace',
-                  fontSize: 11,
+                  fontSize: context.fs(11),
                   height: 1.5,
                   color: Color(0xFFD1D5DB),
                 ),
@@ -1472,7 +1472,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           Flexible(
             child: Text(
               name,
-              style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+              style: TextStyle(fontFamily: 'monospace', fontSize: context.fs(11)),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -1554,8 +1554,8 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                 const SizedBox(height: 10),
                 for (final f in (lastFiles(result)))
                   Text('${f.name} · ${_fmtBytes(f.size)}',
-                      style: const TextStyle(
-                          fontFamily: 'monospace', fontSize: 11)),
+                      style: TextStyle(
+                          fontFamily: 'monospace', fontSize: context.fs(11))),
               ],
             ),
     );

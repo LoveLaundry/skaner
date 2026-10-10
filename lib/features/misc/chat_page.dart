@@ -318,7 +318,7 @@ class _ChatPageState extends State<ChatPage> {
                   children: [
                     Text(
                       Fmt.dateTime(pick(row, ['updated_at'])),
-                      style: t.labelSmall?.copyWith(color: c.fgFaint, fontSize: 10.5),
+                      style: t.labelSmall?.copyWith(color: c.fgFaint, fontSize: context.fs(10.5)),
                     ),
                     if (str(row, ['assigned_admin_name']).isNotEmpty) ...[
                       const SizedBox(width: 8),
@@ -328,7 +328,7 @@ class _ChatPageState extends State<ChatPage> {
                         child: Text(
                           str(row, ['assigned_admin_name']),
                           style: t.labelSmall
-                              ?.copyWith(color: c.brandText, fontSize: 10.5),
+                              ?.copyWith(color: c.brandText, fontSize: context.fs(10.5)),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -337,7 +337,7 @@ class _ChatPageState extends State<ChatPage> {
                     if (intOf(row, ['message_count']) > 0)
                       Text(
                         '${intOf(row, ['message_count'])}',
-                        style: t.labelSmall?.copyWith(color: c.fgFaint, fontSize: 10.5),
+                        style: t.labelSmall?.copyWith(color: c.fgFaint, fontSize: context.fs(10.5)),
                       ),
                   ],
                 ),
@@ -512,7 +512,7 @@ class _ChatPageState extends State<ChatPage> {
                     who,
                     style: t.labelSmall?.copyWith(
                       color: mine ? c.brandText : c.fgMuted,
-                      fontSize: 10.5,
+                      fontSize: context.fs(10.5),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -525,7 +525,7 @@ class _ChatPageState extends State<ChatPage> {
                     Fmt.dateTime(message['timestamp']),
                     style: t.labelSmall?.copyWith(
                       color: mine ? c.brandText : c.fgFaint,
-                      fontSize: 10.5,
+                      fontSize: context.fs(10.5),
                     ),
                   ),
                 ],

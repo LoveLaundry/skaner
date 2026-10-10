@@ -382,7 +382,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: t.labelSmall?.copyWith(color: c.fgFaint, fontSize: 10.5)),
+          Text(label, style: t.labelSmall?.copyWith(color: c.fgFaint, fontSize: context.fs(10.5))),
           Text(
             value,
             style: t.labelLarge
@@ -626,7 +626,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           Text(
             label.toUpperCase(),
             style: t.labelSmall?.copyWith(
-                color: c.fgFaint, fontSize: 10, letterSpacing: 0.6),
+                color: c.fgFaint, fontSize: context.fs(10), letterSpacing: 0.6),
           ),
           const SizedBox(height: 1),
           Text(

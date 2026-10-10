@@ -236,12 +236,12 @@ class PendingSyncIndicator extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 10.5, color: fg),
+          Icon(icon, size: context.fs(10.5), color: fg),
           const SizedBox(width: 4),
           Text(
             text,
             style: TextStyle(
-                fontSize: 10, fontWeight: FontWeight.w600, color: fg),
+                fontSize: context.fs(10), fontWeight: FontWeight.w600, color: fg),
           ),
         ],
       ),
@@ -387,7 +387,7 @@ class _AppCommandSearchState extends State<AppCommandSearch> {
                               child: Text(
                                 entry.key.toUpperCase(),
                                 style: t.labelSmall?.copyWith(
-                                    color: c.fgFaint, fontSize: 10),
+                                    color: c.fgFaint, fontSize: context.fs(10)),
                               ),
                             ),
                             for (final item in entry.value)

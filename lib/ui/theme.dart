@@ -413,6 +413,15 @@ extension AppColorsContext on BuildContext {
   AppColors get c => Theme.of(this).extension<AppColors>()!;
   bool get isDark => Theme.of(this).brightness == Brightness.dark;
   TextTheme get texts => Theme.of(this).textTheme;
+
+  /// Scales a fixed UI font size with the active [AppFontSize] step, so
+  /// hand-placed metadata sizes (badges, captions, table headers) grow with
+  /// the Comfort setting instead of staying pinned. Print/PDF sheets must
+  /// keep literal sizes and never use this.
+  double fs(double size) {
+    final base = texts.bodyMedium?.fontSize ?? 14;
+    return size * base / 14;
+  }
 }
 
 /// One radius scale, mirroring `--radius-xs … --radius-xl`.
@@ -452,14 +461,16 @@ class Shadows {
   ];
 }
 
-/// The six body sizes from the web app's `FONT_SIZE_MAP`.
+/// The six body sizes from the web app's `FONT_SIZE_MAP`, plus the shared
+/// Comfort step (web `xxxl`) for elders and low-vision operators.
 enum AppFontSize {
   xs(12, 0.85),
   sm(13, 0.92),
   md(14, 1.0),
   lg(15, 1.08),
   xl(17, 1.18),
-  xxl(19, 1.30);
+  xxl(19, 1.30),
+  xxxl(22, 1.50);
 
   const AppFontSize(this.px, this.zoom);
   final double px;
@@ -471,8 +482,12 @@ enum AppFontSize {
         AppFontSize.md => 'Default',
         AppFontSize.lg => 'Large',
         AppFontSize.xl => 'Extra large',
-        AppFontSize.xxl => 'Largest',
+        AppFontSize.xxl => 'XXL',
+        AppFontSize.xxxl => 'Comfort',
       };
+
+  /// Comfort mode is the largest step, meant for elders.
+  bool get isComfort => this == AppFontSize.xxxl;
 }
 
 /// The nine selectable theme presets, matching the web app's list.
