@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:love_mobi/core/api/api_client.dart';
 import 'package:love_mobi/core/api/connectivity_service.dart';
@@ -6,7 +7,24 @@ import 'package:love_mobi/core/api/sync_engine.dart';
 import 'package:love_mobi/state/auth_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
+// flutter_secure_storage has no host implementation under `flutter test`, so
+// every call would throw MissingPluginException. Stub the channel: reads return
+// null (no stored session) and writes succeed, which is what the identity code
+// sees on a fresh install.
+const MethodChannel _secureStorageChannel =
+    MethodChannel('plugins.it_nomads.com/flutter_secure_storage');
+
+void _stubSecureStorage() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(_secureStorageChannel, (MethodCall call) async => null);
+  });
+}
+
 void main() {
+  _stubSecureStorage();
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('queued-write account isolation', () {

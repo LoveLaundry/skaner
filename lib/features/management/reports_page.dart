@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 
-import '../../core/api/query_cache.dart';
 import '../../core/utils/formatting.dart';
 import '../../data/resource_controller.dart';
 import '../../state/app_scope.dart';
@@ -364,7 +363,7 @@ class _ReportsPageState extends State<ReportsPage>
                     SizedBox(
                       width: 108,
                       child: Text(
-                        str(r, ['name', 'category'], '—'),
+                        str(r, ['name', 'category'], 'â€”'),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: context.texts.bodySmall
@@ -463,7 +462,7 @@ class _ReportsPageState extends State<ReportsPage>
                     children: [
                       Expanded(
                         child: Text(
-                          str(r, ['customer_name', 'name'], '—'),
+                          str(r, ['customer_name', 'name'], 'â€”'),
                           style: context.texts.titleSmall,
                         ),
                       ),
