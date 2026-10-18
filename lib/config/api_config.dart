@@ -44,7 +44,8 @@ class ApiConfig {
   static const String defaultManagement = 'https://laundry-management.vercel.app';
   static const String defaultAi = 'https://love-ai.vercel.app';
 
-  static const String defaultAiKey = 'dev-key-change-me';
+  /// AI authentication is server-side. Never embed an API key in the APK.
+  static const String defaultAiKey = '';
 
   /// Local development fallbacks (adb reverse / emulator host loopback).
   static const String localQuotation = 'http://localhost:8000';

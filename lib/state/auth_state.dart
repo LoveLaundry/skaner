@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/api/api_client.dart';
@@ -162,6 +163,10 @@ class AuthState extends ChangeNotifier {
 
   static const _tokenKey = 'll_token';
   static const _userKey = 'll_user';
+  static const _secureStorage = FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
+  );
 
   final ApiClient api;
 
@@ -191,7 +196,7 @@ class AuthState extends ChangeNotifier {
   /// route through [onUnauthorized], exactly like the web client.
   Future<void> restore() async {
     final prefs = await SharedPreferences.getInstance();
-    final rawToken = prefs.getString(_tokenKey);
+    final rawToken = await _secureStorage.read(key: _tokenKey);
     final rawUser = prefs.getString(_userKey);
     if (rawToken != null && rawToken.isNotEmpty && rawUser != null) {
       try {
@@ -205,7 +210,7 @@ class AuthState extends ChangeNotifier {
           api.setToken(rawToken);
         }
       } catch (_) {
-        await prefs.remove(_tokenKey);
+        await _secureStorage.delete(key: _tokenKey);
         await prefs.remove(_userKey);
       }
     }
@@ -219,7 +224,7 @@ class AuthState extends ChangeNotifier {
     _error = null;
     api.setToken(token);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_tokenKey, token);
+    await _secureStorage.write(key: _tokenKey, value: token);
     await prefs.setString(_userKey, jsonEncode(user.toJson()));
     notifyListeners();
   }
@@ -239,7 +244,7 @@ class AuthState extends ChangeNotifier {
     _error = null;
     api.setToken(null);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_tokenKey);
+    await _secureStorage.delete(key: _tokenKey);
     await prefs.remove(_userKey);
     notifyListeners();
   }

@@ -393,7 +393,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      'Sent as X-API-Key when requesting AI insights.',
+                      'AI insights use the authenticated service session; no API key is stored on this device.',
                       style: t.bodySmall?.copyWith(color: c.fgFaint),
                     ),
                     const SizedBox(height: 12),

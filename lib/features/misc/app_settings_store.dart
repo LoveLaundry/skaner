@@ -5,23 +5,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../config/api_config.dart';
 
 /// Device-level settings that outlive a session but are not part of the account:
-/// the runtime backend URLs and the AI service key.
+/// runtime backend URL overrides only. AI authentication is server-side and is
+/// intentionally not configurable in the client.
 ///
 /// The web app reads these from Vite env vars, which a shipped APK has no
-/// equivalent of, so they live in SharedPreferences and are pushed into
-/// [ApiConfig] overrides on load. The AI key is deliberately kept out of
-/// [ApiConfig] because it is not a URL.
+/// equivalent of, so URL overrides live in SharedPreferences and are pushed
+/// into [ApiConfig] on load.
 class AppSettingsStore {
   AppSettingsStore._();
 
   static const _urlsKey = 'll_api_overrides';
-  static const _aiKey = 'll_ai_key';
-
-  static String _ai = ApiConfig.defaultAiKey;
   static bool _loaded = false;
 
-  /// Last saved AI key, defaulting to the compiled-in development key.
-  static String get aiKey => _ai;
+  /// Empty by design: the APK never stores or sends a shared AI credential.
+  static String get aiKey => ApiConfig.defaultAiKey;
 
   static bool get loaded => _loaded;
 
@@ -46,14 +43,12 @@ class AppSettingsStore {
         // A corrupt blob must not brick the app; the defaults are still valid.
       }
     }
-    _ai = prefs.getString(_aiKey) ?? ApiConfig.defaultAiKey;
     _loaded = true;
   }
 
+  /// Retained as a no-op for compatibility with older settings screens.
   static Future<void> setAiKey(String value) async {
-    _ai = value.trim();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_aiKey, _ai);
+    // AI credentials must never be accepted from or persisted by the client.
   }
 
   /// [service] is a [ServiceNames] value; the override key is `api.<service>`.
