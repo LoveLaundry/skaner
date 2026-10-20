@@ -271,6 +271,8 @@ class ApiClient {
   }) async {
     final svc = serviceFor(service);
     final encoded = body == null ? null : jsonEncode(body);
+    final requestIdempotencyKey = idempotencyKey ??
+        (method == 'POST' ? randomIdempotencyKey() : null);
 
     if (allowQueueing && svc.allowQueueing && _shouldQueue(svc, path)) {
       final id = await _enqueue(
@@ -279,8 +281,7 @@ class ApiClient {
         path: path,
         query: query,
         body: body,
-        idempotencyKey: idempotencyKey ??
-            (method == 'POST' ? randomIdempotencyKey() : null),
+        idempotencyKey: requestIdempotencyKey,
       );
       return QueuedResponse(id, svc.name, method, path);
     }
@@ -293,7 +294,7 @@ class ApiClient {
       jsonBody: encoded,
       includeAuth: includeAuth,
       extraHeaders: extraHeaders,
-      idempotencyKey: idempotencyKey,
+      idempotencyKey: requestIdempotencyKey,
     );
   }
 
