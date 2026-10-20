@@ -442,21 +442,28 @@ class _CommandRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = context.c;
-    return InkWell(
-      onTap: onTap,
-      child: Container(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+      child: Material(
         color: selected ? c.surfaceHover : Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
-        child: Row(
-          children: [
-            Icon(item.icon ?? Icons.chevron_right,
-                size: 17, color: selected ? c.brand : c.fgFaint),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(item.label, style: context.texts.bodyLarge),
+        borderRadius: BorderRadius.circular(Radii.md),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(Radii.md),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+            child: Row(
+              children: [
+                Icon(item.icon ?? Icons.chevron_right,
+                    size: 17, color: selected ? c.brand : c.fgFaint),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(item.label, style: context.texts.bodyLarge),
+                ),
+                Icon(Icons.north_west, size: 13, color: c.fgFaint),
+              ],
             ),
-            Icon(Icons.north_west, size: 13, color: c.fgFaint),
-          ],
+          ),
         ),
       ),
     );

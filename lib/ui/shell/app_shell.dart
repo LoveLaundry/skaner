@@ -390,47 +390,39 @@ class _DrawerItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.c;
     final t = context.texts;
-    return Stack(
-      children: [
-        if (active)
-          Positioned(
-            left: 0,
-            top: 0,
-            bottom: 0,
-            child: Container(width: 3, color: c.sidebarIndicator),
-          ),
-        Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              color: active ? c.sidebarHoverBg : Colors.transparent,
-              child: Row(
-                children: [
-                  Icon(
-                    route.icon ?? Icons.chevron_right,
-                    size: 17,
-                    color: active ? c.sidebarIndicator : c.sidebarText,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      route.label,
-                      style: t.bodyMedium?.copyWith(
-                        color: active ? c.sidebarActive : c.sidebarText,
-                        fontWeight:
-                            active ? FontWeight.w600 : FontWeight.w400,
-                      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+      child: Material(
+        color: active ? c.sidebarHoverBg : Colors.transparent,
+        borderRadius: BorderRadius.circular(Radii.md),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(Radii.md),
+          onTap: onTap,
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+            child: Row(
+              children: [
+                Icon(
+                  route.icon ?? Icons.chevron_right,
+                  size: 18,
+                  color: active ? c.sidebarIndicator : c.sidebarText,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    route.label,
+                    style: t.bodyMedium?.copyWith(
+                      color: active ? c.sidebarActive : c.sidebarText,
+                      fontWeight: active ? FontWeight.w600 : FontWeight.w400,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }
