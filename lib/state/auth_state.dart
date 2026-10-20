@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/api/api_client.dart';
+import '../nav/access.dart' as nav;
 
 /// Port of `src/types/auth.ts` + `src/context/AuthContext.tsx`.
 @immutable
@@ -38,7 +39,10 @@ class AppUser {
   /// null. Parsed lazily by [permissionList].
   final String? permissions;
 
-  bool get isAdmin => roleId.toUpperCase() == 'ADMIN';
+  bool get isAdmin => nav.isAdminRole(roleId);
+  bool get isManager => nav.normaliseRole(roleId) == nav.Roles.manager;
+  bool get isStaff => nav.normaliseRole(roleId) == nav.Roles.staff;
+  bool get isPlatformAdmin => nav.isPlatformAdminRole(roleId);
 
   List<String> get permissionList {
     final raw = permissions;
@@ -79,10 +83,13 @@ class AppUser {
   }
 
   /// Port of `hooks/usePermissions.ts`: admins pass everything, everyone else
-  /// needs an explicit grant.
+  /// needs an explicit grant. A platform administrator is a superset admin, so
+  /// it passes too (matching the web client). `*` / `all` are wildcard grants.
   bool hasPermission(String permission) {
     if (isAdmin) return true;
-    return permissionList.contains(permission);
+    final list = permissionList;
+    if (list.contains('*') || list.contains('all')) return true;
+    return list.contains(permission);
   }
 
   factory AppUser.fromJson(Map<String, dynamic> j) => AppUser(
@@ -184,6 +191,12 @@ class AuthState extends ChangeNotifier {
   String? get token => _session?.token;
   bool get isAuthenticated => _session != null;
   bool get isAdmin => user?.isAdmin ?? false;
+  bool get isPlatformAdmin => user?.isPlatformAdmin ?? false;
+
+  /// A platform administrator session is confined to the platform surface;
+  /// there is no tenant "support mode" on mobile, so this tracks the role.
+  bool get isPlatformOnly => isPlatformAdmin;
+
   bool get restored => _restored;
   bool get busy => _busy;
   String? get error => _error;

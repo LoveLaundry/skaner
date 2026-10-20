@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import '../../nav/access.dart' as nav;
 import 'json.dart';
 
 /// Cross-database verification marker attached to bills, gate passes,
@@ -74,9 +75,10 @@ class AppUser {
   /// Stored as a JSON array string, sometimes as a bare comma-separated list.
   final String? permissions;
 
-  bool get isAdmin => roleId.toUpperCase() == 'ADMIN';
-  bool get isManager => roleId.toUpperCase() == 'MANAGER';
-  bool get isStaff => roleId.toUpperCase() == 'STAFF';
+  bool get isAdmin => nav.isAdminRole(roleId);
+  bool get isPlatformAdmin => nav.isPlatformAdminRole(roleId);
+  bool get isManager => nav.normaliseRole(roleId) == nav.Roles.manager;
+  bool get isStaff => nav.normaliseRole(roleId) == nav.Roles.staff;
   bool get isActive => status.toLowerCase() == 'active';
 
   List<String> get permissionList {
@@ -100,7 +102,8 @@ class AppUser {
         .toList();
   }
 
-  /// ADMIN holds every permission implicitly; everyone else needs it listed.
+  /// ADMIN and PLATFORM_ADMIN hold every permission implicitly; everyone else
+  /// needs it listed. `*` / `all` are wildcard grants.
   bool hasPermission(String permission) {
     if (isAdmin) return true;
     final list = permissionList;

@@ -465,6 +465,7 @@ class AppRouteRegistry {
         builder: (_) => const WorkersPage(),
         group: 'Workforce',
         icon: Icons.badge_outlined,
+        adminOnly: true,
         keywords: const ['staff', 'roster', 'team'],
       ),
       AppRoutes.workerNew: AppRoute(
@@ -473,6 +474,7 @@ class AppRouteRegistry {
         builder: (_) => const WorkerFormPage(),
         group: 'Workforce',
         showInDrawer: false,
+        adminOnly: true,
       ),
       AppRoutes.workerDetail: AppRoute(
         path: AppRoutes.workerDetail,
@@ -481,6 +483,7 @@ class AppRouteRegistry {
         group: 'Workforce',
         showInDrawer: false,
         showInCommand: false,
+        adminOnly: true,
       ),
       AppRoutes.workerPayroll: AppRoute(
         path: AppRoutes.workerPayroll,
@@ -488,6 +491,7 @@ class AppRouteRegistry {
         builder: (_) => const WorkerPayrollPage(),
         group: 'Workforce',
         icon: Icons.payments_outlined,
+        adminOnly: true,
         keywords: const ['wages', 'attendance', 'output'],
       ),
 
@@ -498,6 +502,7 @@ class AppRouteRegistry {
         builder: (_) => const ManagementDashboardPage(),
         group: 'Management',
         icon: Icons.dashboard_outlined,
+        adminOnly: true,
         keywords: const ['hr', 'headcount', 'payroll'],
       ),
       AppRoutes.dashboard: AppRoute(
@@ -506,6 +511,7 @@ class AppRouteRegistry {
         builder: (_) => const DashboardPage(),
         group: 'Management',
         icon: Icons.insights_outlined,
+        adminOnly: true,
         keywords: const ['kpi', 'metrics', 'overview'],
       ),
       AppRoutes.managementEmployees: AppRoute(
@@ -514,6 +520,7 @@ class AppRouteRegistry {
         builder: (_) => const EmployeesPage(),
         group: 'Management',
         icon: Icons.groups_outlined,
+        adminOnly: true,
         keywords: const ['staff', 'hr', 'people'],
       ),
       AppRoutes.managementEmployeeNew: AppRoute(
@@ -522,6 +529,7 @@ class AppRouteRegistry {
         builder: (_) => const EmployeeFormPage(),
         group: 'Management',
         showInDrawer: false,
+        adminOnly: true,
       ),
       AppRoutes.managementEmployeeDetail: AppRoute(
         path: AppRoutes.managementEmployeeDetail,
@@ -530,6 +538,7 @@ class AppRouteRegistry {
         group: 'Management',
         showInDrawer: false,
         showInCommand: false,
+        adminOnly: true,
       ),
       AppRoutes.managementDepartments: AppRoute(
         path: AppRoutes.managementDepartments,
@@ -537,6 +546,7 @@ class AppRouteRegistry {
         builder: (_) => const DepartmentsPage(),
         group: 'Management',
         icon: Icons.account_tree_outlined,
+        adminOnly: true,
         keywords: const ['division', 'unit'],
       ),
       AppRoutes.managementRoles: AppRoute(
@@ -545,6 +555,7 @@ class AppRouteRegistry {
         builder: (_) => const RolesPage(),
         group: 'Management',
         icon: Icons.workspaces_outlined,
+        adminOnly: true,
         keywords: const ['access', 'admin', 'manager'],
       ),
       AppRoutes.managementPermissions: AppRoute(
@@ -553,6 +564,7 @@ class AppRouteRegistry {
         builder: (_) => const PermissionsPage(),
         group: 'Management',
         icon: Icons.key_outlined,
+        adminOnly: true,
         keywords: const ['access', 'grant', 'role'],
       ),
       AppRoutes.managementAttendance: AppRoute(
@@ -561,6 +573,7 @@ class AppRouteRegistry {
         builder: (_) => const AttendancePage(),
         group: 'Management',
         icon: Icons.how_to_reg_outlined,
+        adminOnly: true,
         keywords: const ['present', 'absent', 'overtime'],
       ),
       AppRoutes.managementLeave: AppRoute(
@@ -569,6 +582,7 @@ class AppRouteRegistry {
         builder: (_) => const LeavePage(),
         group: 'Management',
         icon: Icons.beach_access_outlined,
+        adminOnly: true,
         keywords: const ['vacation', 'absent'],
       ),
       AppRoutes.payroll: AppRoute(
@@ -577,6 +591,7 @@ class AppRouteRegistry {
         builder: (_) => const PayrollPage(),
         group: 'Management',
         icon: Icons.payments_outlined,
+        adminOnly: true,
         keywords: const ['salary', 'slip', 'payout'],
       ),
       AppRoutes.managementPerformance: AppRoute(
@@ -585,6 +600,7 @@ class AppRouteRegistry {
         builder: (_) => const PerformancePage(),
         group: 'Management',
         icon: Icons.trending_up_outlined,
+        adminOnly: true,
         keywords: const ['review', 'rating'],
       ),
       AppRoutes.managementTraining: AppRoute(
@@ -593,6 +609,7 @@ class AppRouteRegistry {
         builder: (_) => const TrainingPage(),
         group: 'Management',
         icon: Icons.school_outlined,
+        adminOnly: true,
         keywords: const ['learn', 'course'],
       ),
       AppRoutes.managementAnnouncements: AppRoute(
@@ -601,6 +618,7 @@ class AppRouteRegistry {
         builder: (_) => const AnnouncementsPage(),
         group: 'Management',
         icon: Icons.campaign_outlined,
+        adminOnly: true,
         keywords: const ['notice', 'holiday', 'calendar'],
       ),
       AppRoutes.managementExpenses: AppRoute(
@@ -609,6 +627,7 @@ class AppRouteRegistry {
         builder: (_) => const ExpensesPage(),
         group: 'Management',
         icon: Icons.paid_outlined,
+        adminOnly: true,
         keywords: const ['spend', 'cost', 'adjustment'],
       ),
       AppRoutes.managementReports: AppRoute(
@@ -617,6 +636,7 @@ class AppRouteRegistry {
         builder: (_) => const ReportsPage(),
         group: 'Management',
         icon: Icons.assessment_outlined,
+        adminOnly: true,
         keywords: const ['profit', 'loss', 'daily', 'monthly'],
       ),
       AppRoutes.users: AppRoute(
@@ -626,6 +646,7 @@ class AppRouteRegistry {
         group: 'Management',
         icon: Icons.manage_accounts_outlined,
         readPermission: 'users.manage',
+        adminOnly: true,
         keywords: const ['accounts', 'login', 'admin'],
       ),
 
@@ -653,6 +674,7 @@ class AppRouteRegistry {
         builder: (_) => const AiInsightsPage(),
         group: 'Insights',
         icon: Icons.auto_awesome_outlined,
+        adminOnly: true,
         keywords: const ['forecast', 'trend', 'analysis'],
       ),
       AppRoutes.entryFlow: AppRoute(
@@ -669,6 +691,7 @@ class AppRouteRegistry {
         builder: (_) => const ExportPage(),
         group: 'Reports',
         icon: Icons.download_outlined,
+        adminOnly: true,
         keywords: const ['csv', 'excel', 'xlsx', 'download'],
       ),
       AppRoutes.priceList: AppRoute(
@@ -687,6 +710,7 @@ class AppRouteRegistry {
         builder: (_) => const DatabaseSyncPage(),
         group: 'System',
         icon: Icons.storage_outlined,
+        adminOnly: true,
         keywords: const ['reset', 'reindex', 'admin'],
       ),
       AppRoutes.backupRestore: AppRoute(
@@ -695,6 +719,7 @@ class AppRouteRegistry {
         builder: (_) => const BackupRestorePage(),
         group: 'System',
         icon: Icons.backup_outlined,
+        adminOnly: true,
         keywords: const ['snapshot', 'pdf', 'json', 'restore'],
       ),
       AppRoutes.settings: AppRoute(
@@ -703,6 +728,7 @@ class AppRouteRegistry {
         builder: (_) => const SettingsPage(),
         group: 'System',
         icon: Icons.settings_outlined,
+        adminOnly: true,
         keywords: const ['theme', 'font', 'service', 'api'],
       ),
       AppRoutes.profile: AppRoute(

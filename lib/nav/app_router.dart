@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../state/app_scope.dart';
 import '../state/app_services.dart';
 import '../ui/shell/app_shell.dart';
+import 'access.dart';
 import 'app_route.dart';
 import 'route_registry.dart';
 
@@ -63,9 +64,26 @@ class _AppRouterState extends State<AppRouter> {
     widget.services.loadHotels();
   }
 
+  /// The landing destination for the current session.
+  ///
+  /// Uses the shared access policy so a role that cannot open its usual home is
+  /// never dropped onto a hidden screen: an administrator lands on the
+  /// management dashboard, and everyone else lands on Today. Both candidates
+  /// are evaluated against the session's real grants, and Today is the last
+  /// resort because every signed-in role may open it.
   String _homeFor(AppServices services) {
-    if (!services.auth.isAuthenticated) return AppRoutes.login;
-    return services.auth.isAdmin ? AppRoutes.dashboard : AppRoutes.today;
+    final auth = services.auth;
+    if (!auth.isAuthenticated) return AppRoutes.login;
+    return landingPathFor(
+      roleId: auth.user?.roleId,
+      permissionList: auth.user?.permissionList ?? const [],
+      platformAdmin: auth.isPlatformAdmin,
+      fallback: AppRoutes.today,
+      candidates: const [
+        LandingCandidate(AppRoutes.dashboard, AccessSpec(adminOnly: true)),
+        LandingCandidate(AppRoutes.today, AccessSpec()),
+      ],
+    );
   }
 
   /// Whether [path] resolves to a destination a signed-out visitor may open.

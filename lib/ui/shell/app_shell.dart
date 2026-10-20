@@ -176,7 +176,10 @@ class AppDrawer extends StatelessWidget {
                       },
                       itemBuilder: (_) => [
                         const PopupMenuItem(value: 'profile', child: Text('Profile')),
-                        const PopupMenuItem(value: 'settings', child: Text('Settings')),
+                        if (AppRoutes.lookup(AppRoutes.settings)?.isVisibleTo(services) ??
+                            false)
+                          const PopupMenuItem(
+                              value: 'settings', child: Text('Settings')),
                         const PopupMenuDivider(),
                         const PopupMenuItem(value: 'logout', child: Text('Sign out')),
                       ],

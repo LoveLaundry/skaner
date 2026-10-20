@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../state/app_services.dart';
+import 'access.dart';
 
 /// One destination in the app's navigation contract.
 ///
@@ -17,6 +18,10 @@ class AppRoute {
     this.icon,
     this.permission,
     this.readPermission,
+    this.roles,
+    this.adminOnly = false,
+    this.platformOnly = false,
+    this.tenantOnly = false,
     this.keywords = const [],
     this.showInDrawer = true,
     this.showInCommand = true,
@@ -38,6 +43,18 @@ class AppRoute {
   /// Read permission. Hides the whole destination.
   final String? readPermission;
 
+  /// Role ids permitted to reach the destination. Null means "any role".
+  final Set<String>? roles;
+
+  /// Tenant-admin only (ADMIN / MANAGER) — payroll, HR, expenses, reporting.
+  final bool adminOnly;
+
+  /// Platform-admin only — the registry-style surfaces.
+  final bool platformOnly;
+
+  /// Platform administrators are excluded (tenant operations).
+  final bool tenantOnly;
+
   final List<String> keywords;
   final bool showInDrawer;
   final bool showInCommand;
@@ -51,17 +68,32 @@ class AppRoute {
   /// Reachable without a session.
   final bool guest;
 
+  /// The access rule this destination enforces. Read and write are independent
+  /// grants, so a route that declares both is gated on the *read* permission.
+  AccessSpec get accessSpec => AccessSpec(
+        permissions: [
+          if (readPermission != null) readPermission!,
+          if (readPermission == null && permission != null) permission!,
+        ],
+        roles: roles,
+        adminOnly: adminOnly,
+        platformOnly: platformOnly,
+        tenantOnly: tenantOnly,
+      );
+
   /// Whether the destination should be offered at all.
   ///
-  /// Reading and writing are independent grants, so a route that declares both
-  /// is gated on the *read* permission. An `||` here used to expose write-gated
-  /// destinations to a read-only operator. A route that only declares a write
-  /// permission is still gated on it — otherwise it would be reachable by
+  /// Delegates to the shared access policy so the drawer, the bottom bar, the
+  /// command palette and the router gate agree. A route that declares only a
+  /// write permission is still gated on it — otherwise it would be reachable by
   /// nobody but its author.
-  bool isVisibleTo(AppServices s) {
-    final gate = readPermission ?? permission;
-    return gate == null || s.auth.hasPermission(gate);
-  }
+  bool isVisibleTo(AppServices s) => canAccess(
+        roleId: s.auth.user?.roleId,
+        permissionList: s.auth.user?.permissionList ?? const [],
+        spec: accessSpec,
+        isPlatformOnly: s.auth.isPlatformOnly,
+        platformAdmin: s.auth.isPlatformAdmin,
+      );
 
   /// Whether the create/edit/delete affordances inside the destination render.
   bool isWritableBy(AppServices s) =>
