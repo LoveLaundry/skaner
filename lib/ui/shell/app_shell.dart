@@ -44,8 +44,7 @@ class AppShell extends StatelessWidget {
                   for (final r in tabRoutes)
                     NavigationDestination(
                       icon: Icon(r.icon ?? Icons.circle_outlined),
-                      selectedIcon:
-                          Icon(r.icon ?? Icons.circle, size: 22),
+                      selectedIcon: Icon(r.icon ?? Icons.circle, size: 22),
                       label: r.label,
                     ),
                 ],
@@ -93,18 +92,12 @@ class AppNavigatorPush {
 
 /// Exposes the shell's `push` function to the subtree.
 class RoutePushScope extends InheritedWidget {
-  const RoutePushScope({
-    super.key,
-    required this.push,
-    required super.child,
-  });
+  const RoutePushScope({super.key, required this.push, required super.child});
 
   final void Function(String path) push;
 
   static void Function(String)? of(BuildContext context) =>
-      context
-          .dependOnInheritedWidgetOfExactType<RoutePushScope>()
-          ?.push;
+      context.dependOnInheritedWidgetOfExactType<RoutePushScope>()?.push;
 
   @override
   bool updateShouldNotify(RoutePushScope oldWidget) => false;
@@ -137,7 +130,8 @@ class AppDrawer extends StatelessWidget {
     return Drawer(
       backgroundColor: c.sidebarBg,
       child: SafeArea(
-        child: Column(
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
             // Identity + hotel scope
             Padding(
@@ -152,13 +146,11 @@ class AppDrawer extends StatelessWidget {
                       children: [
                         Text(
                           'Love Laundry',
-                          style: t.titleSmall
-                              ?.copyWith(color: c.sidebarActive),
+                          style: t.titleSmall?.copyWith(color: c.sidebarActive),
                         ),
                         Text(
                           auth.user?.displayName ?? 'Guest',
-                          style: t.labelSmall
-                              ?.copyWith(color: c.sidebarLabel),
+                          style: t.labelSmall?.copyWith(color: c.sidebarLabel),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
@@ -167,21 +159,35 @@ class AppDrawer extends StatelessWidget {
                   if (auth.user != null)
                     PopupMenuButton<String>(
                       color: c.surface,
-                      icon: Icon(Icons.more_vert,
-                          size: 18, color: c.sidebarText),
+                      icon: Icon(
+                        Icons.more_vert,
+                        size: 18,
+                        color: c.sidebarText,
+                      ),
                       onSelected: (v) {
                         if (v == 'logout') _logout(context);
-                        if (v == 'profile') AppNavigatorPush.push(context, AppRoutes.profile);
-                        if (v == 'settings') AppNavigatorPush.push(context, AppRoutes.settings);
+                        if (v == 'profile')
+                          AppNavigatorPush.push(context, AppRoutes.profile);
+                        if (v == 'settings')
+                          AppNavigatorPush.push(context, AppRoutes.settings);
                       },
                       itemBuilder: (_) => [
-                        const PopupMenuItem(value: 'profile', child: Text('Profile')),
-                        if (AppRoutes.lookup(AppRoutes.settings)?.isVisibleTo(services) ??
+                        const PopupMenuItem(
+                          value: 'profile',
+                          child: Text('Profile'),
+                        ),
+                        if (AppRoutes.lookup(AppRoutes.settings)
+                                ?.isVisibleTo(services) ??
                             false)
                           const PopupMenuItem(
-                              value: 'settings', child: Text('Settings')),
+                            value: 'settings',
+                            child: Text('Settings'),
+                          ),
                         const PopupMenuDivider(),
-                        const PopupMenuItem(value: 'logout', child: Text('Sign out')),
+                        const PopupMenuItem(
+                          value: 'logout',
+                          child: Text('Sign out'),
+                        ),
                       ],
                     ),
                 ],
@@ -208,7 +214,9 @@ class AppDrawer extends StatelessWidget {
                   onTap: () => _openCommand(context, services),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 10),
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
                     child: Row(
                       children: [
                         Icon(Icons.search, size: 16, color: c.sidebarLabel),
@@ -216,8 +224,7 @@ class AppDrawer extends StatelessWidget {
                         Expanded(
                           child: Text(
                             'Search screens…',
-                            style: t.bodySmall
-                                ?.copyWith(color: c.sidebarLabel),
+                            style: t.bodySmall?.copyWith(color: c.sidebarLabel),
                           ),
                         ),
                       ],
@@ -226,47 +233,42 @@ class AppDrawer extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.only(bottom: 12),
-                children: [
-                  for (final entry in groups.entries) ...[
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(18, 14, 16, 6),
-                      child: Text(
-                        entry.key.toUpperCase(),
-                        style: t.labelSmall?.copyWith(
-                          color: c.sidebarLabel,
-                          fontSize: context.fs(10),
-                          letterSpacing: 0.8,
-                        ),
-                      ),
-                    ),
-                    for (final r in entry.value)
-                      _DrawerItem(
-                        route: r,
-                        active: _isActive(r.path, currentPath),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          AppNavigatorPush.push(context, r.path);
-                        },
-                      ),
-                  ],
-                ],
+            for (final entry in groups.entries) ...[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 14, 16, 6),
+                child: Text(
+                  entry.key.toUpperCase(),
+                  style: t.labelSmall?.copyWith(
+                    color: c.sidebarLabel,
+                    fontSize: context.fs(10),
+                    letterSpacing: 0.8,
+                  ),
+                ),
               ),
-            ),
+              for (final r in entry.value)
+                AppDrawerItem(
+                  route: r,
+                  active: _isActive(r.path, currentPath),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    AppNavigatorPush.push(context, r.path);
+                  },
+                ),
+            ],
             // Comfort text — one tap, easy for elders
             InkWell(
               onTap: () {
                 final theme = services.theme;
-                theme.setFontSize(theme.fontSize.isComfort
-                    ? AppFontSize.md
-                    : AppFontSize.xxxl);
+                theme.setFontSize(
+                  theme.fontSize.isComfort ? AppFontSize.md : AppFontSize.xxxl,
+                );
               },
               child: Container(
                 width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   border: Border(top: BorderSide(color: c.sidebarBorder)),
                 ),
@@ -283,14 +285,14 @@ class AppDrawer extends StatelessWidget {
                     Expanded(
                       child: Text(
                         'Comfort text',
-                        style: t.labelMedium
-                            ?.copyWith(color: c.sidebarText),
+                        style: t.labelMedium?.copyWith(color: c.sidebarText),
                       ),
                     ),
                     Switch(
                       value: services.theme.fontSize.isComfort,
                       onChanged: (on) => services.theme.setFontSize(
-                          on ? AppFontSize.xxxl : AppFontSize.md),
+                        on ? AppFontSize.xxxl : AppFontSize.md,
+                      ),
                     ),
                   ],
                 ),
@@ -304,8 +306,10 @@ class AppDrawer extends StatelessWidget {
                 final online = snap.data ?? true;
                 return Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     border: Border(top: BorderSide(color: c.sidebarBorder)),
                   ),
@@ -320,9 +324,12 @@ class AppDrawer extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        online ? 'Online' : 'Offline — changes queue',
-                        style: t.labelSmall?.copyWith(color: c.sidebarLabel),
+                      Expanded(
+                        child: Text(
+                          online ? 'Online' : 'Offline — changes queue',
+                          overflow: TextOverflow.ellipsis,
+                          style: t.labelSmall?.copyWith(color: c.sidebarLabel),
+                        ),
                       ),
                     ],
                   ),
@@ -340,17 +347,18 @@ class AppDrawer extends StatelessWidget {
     return current.startsWith('$routePath/');
   }
 
-  Future<void> _openCommand(
-      BuildContext context, AppServices services) async {
+  Future<void> _openCommand(BuildContext context, AppServices services) async {
     final items = AppRoutes.table.values
         .where((r) => r.showInCommand && r.isVisibleTo(services))
-        .map((r) => AppCommandItem(
-              label: r.label,
-              route: r.path,
-              icon: r.icon,
-              group: r.group,
-              keywords: r.keywords,
-            ))
+        .map(
+          (r) => AppCommandItem(
+            label: r.label,
+            route: r.path,
+            icon: r.icon,
+            group: r.group,
+            keywords: r.keywords,
+          ),
+        )
         .toList();
     await AppCommandSearch.show(
       context,
@@ -372,11 +380,10 @@ class AppDrawer extends StatelessWidget {
     final services = AppScope.read(context);
     await services.auth.logout();
   }
-
 }
 
-class _DrawerItem extends StatelessWidget {
-  const _DrawerItem({
+class AppDrawerItem extends StatelessWidget {
+  const AppDrawerItem({
     required this.route,
     required this.active,
     required this.onTap,
@@ -390,35 +397,37 @@ class _DrawerItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.c;
     final t = context.texts;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
-      child: Material(
-        color: active ? c.sidebarHoverBg : Colors.transparent,
-        borderRadius: BorderRadius.circular(Radii.md),
-        child: InkWell(
+    return Semantics(
+      selected: active,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+        child: Material(
+          color: active ? c.sidebarHoverBg : Colors.transparent,
           borderRadius: BorderRadius.circular(Radii.md),
-          onTap: onTap,
-          child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-            child: Row(
-              children: [
-                Icon(
-                  route.icon ?? Icons.chevron_right,
-                  size: 18,
-                  color: active ? c.sidebarIndicator : c.sidebarText,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    route.label,
-                    style: t.bodyMedium?.copyWith(
-                      color: active ? c.sidebarActive : c.sidebarText,
-                      fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(Radii.md),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              child: Row(
+                children: [
+                  Icon(
+                    route.icon ?? Icons.chevron_right,
+                    size: 18,
+                    color: active ? c.sidebarIndicator : c.sidebarText,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      route.label,
+                      style: t.bodyMedium?.copyWith(
+                        color: active ? c.sidebarActive : c.sidebarText,
+                        fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -460,24 +469,28 @@ class _HotelScopePicker extends StatelessWidget {
                 isExpanded: true,
                 isDense: true,
                 dropdownColor: c.surface,
-                hint: Text('Select hotel',
-                    style: t.labelSmall?.copyWith(color: c.sidebarLabel)),
+                hint: Text(
+                  'Select hotel',
+                  style: t.labelSmall?.copyWith(color: c.sidebarLabel),
+                ),
                 style: t.labelMedium?.copyWith(color: c.sidebarActive),
                 items: [
                   if (isAdmin)
                     DropdownMenuItem(
                       value: '',
-                      child: Text('All hotels',
-                          style: t.labelMedium
-                              ?.copyWith(color: c.sidebarActive)),
+                      child: Text(
+                        'All hotels',
+                        style: t.labelMedium?.copyWith(color: c.sidebarActive),
+                      ),
                     ),
                   for (final h in hotels)
                     DropdownMenuItem(
                       value: h,
-                      child: Text(h,
-                          overflow: TextOverflow.ellipsis,
-                          style: t.labelMedium
-                              ?.copyWith(color: c.sidebarActive)),
+                      child: Text(
+                        h,
+                        overflow: TextOverflow.ellipsis,
+                        style: t.labelMedium?.copyWith(color: c.sidebarActive),
+                      ),
                     ),
                 ],
                 onChanged: (v) =>

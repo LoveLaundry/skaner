@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:love_mobi/features/misc/dashboard_page.dart';
+import 'package:love_mobi/nav/app_route.dart';
 import 'package:love_mobi/ui/kit/data.dart';
+import 'package:love_mobi/ui/shell/app_shell.dart';
 import 'package:love_mobi/ui/theme.dart';
 
 void main() {
@@ -60,5 +63,41 @@ void main() {
     );
 
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('drawer destinations expose their active state to semantics', (
+    tester,
+  ) async {
+    final semantics = tester.ensureSemantics();
+    var tapped = false;
+
+    try {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppThemeData.build(AppTheme.light, AppFontSize.md),
+          home: Scaffold(
+            body: AppDrawerItem(
+              route: AppRoute(
+                path: '/today',
+                label: 'Today',
+                builder: (_) => const SizedBox.shrink(),
+              ),
+              active: true,
+              onTap: () => tapped = true,
+            ),
+          ),
+        ),
+      );
+
+      final destination = tester.getSemantics(find.byType(AppDrawerItem));
+      final data = destination.getSemanticsData();
+      expect(data.hasFlag(SemanticsFlag.isSelected), isTrue);
+      expect(data.hasAction(SemanticsAction.tap), isTrue);
+
+      await tester.tap(find.text('Today'));
+      expect(tapped, isTrue);
+    } finally {
+      semantics.dispose();
+    }
   });
 }
