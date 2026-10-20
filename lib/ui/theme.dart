@@ -424,40 +424,43 @@ extension AppColorsContext on BuildContext {
   }
 }
 
-/// One radius scale, mirroring `--radius-xs … --radius-xl`.
+/// One radius scale, mirroring `--radius-xs … --radius-xl`. Soft/rounded:
+/// controls sit at [md], cards at [lg], overlays at [xl], so a nested stack
+/// always steps up by a fixed amount.
 class Radii {
   Radii._();
-  static const double xs = 3;
-  static const double sm = 4;
-  static const double md = 6;
-  static const double lg = 8;
-  static const double xl = 12;
+  static const double xs = 6;
+  static const double sm = 8;
+  static const double md = 10;
+  static const double lg = 12;
+  static const double xl = 16;
   static const double pill = 999;
 }
 
 /// One shadow scale. Flutter draws shadows on the decoration, so each entry
-/// is a ready-made `BoxShadow` list.
+/// is a ready-made `BoxShadow` list. Soft/rounded: low-opacity and wide so a
+/// surface lifts without a hard edge.
 class Shadows {
   Shadows._();
 
   static const List<BoxShadow> xs = [
-    BoxShadow(color: Color(0x0D101828), blurRadius: 2, offset: Offset(0, 1)),
+    BoxShadow(color: Color(0x0A101828), blurRadius: 3, offset: Offset(0, 1)),
   ];
   static const List<BoxShadow> sm = [
-    BoxShadow(color: Color(0x14101828), blurRadius: 3, offset: Offset(0, 1)),
-    BoxShadow(color: Color(0x0F101828), blurRadius: 2, offset: Offset(0, 1)),
+    BoxShadow(color: Color(0x14101828), blurRadius: 6, offset: Offset(0, 2)),
+    BoxShadow(color: Color(0x0A101828), blurRadius: 2, offset: Offset(0, 1)),
   ];
   static const List<BoxShadow> md = [
-    BoxShadow(color: Color(0x14101828), blurRadius: 8, offset: Offset(0, 4)),
-    BoxShadow(color: Color(0x0D101828), blurRadius: 4, offset: Offset(0, 2)),
+    BoxShadow(color: Color(0x1A101828), blurRadius: 16, offset: Offset(0, 6)),
+    BoxShadow(color: Color(0x0D101828), blurRadius: 6, offset: Offset(0, 2)),
   ];
   static const List<BoxShadow> lg = [
-    BoxShadow(color: Color(0x1F101828), blurRadius: 24, offset: Offset(0, 14)),
-    BoxShadow(color: Color(0x0F101828), blurRadius: 8, offset: Offset(0, 4)),
+    BoxShadow(color: Color(0x24101828), blurRadius: 32, offset: Offset(0, 18)),
+    BoxShadow(color: Color(0x0F101828), blurRadius: 12, offset: Offset(0, 6)),
   ];
   static const List<BoxShadow> pop = [
-    BoxShadow(color: Color(0x2E101828), blurRadius: 32, offset: Offset(0, 10)),
-    BoxShadow(color: Color(0x14101828), blurRadius: 6, offset: Offset(0, 2)),
+    BoxShadow(color: Color(0x2E101828), blurRadius: 40, offset: Offset(0, 16)),
+    BoxShadow(color: Color(0x14101828), blurRadius: 10, offset: Offset(0, 4)),
   ];
 }
 
