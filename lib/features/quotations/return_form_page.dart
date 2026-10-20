@@ -492,7 +492,7 @@ class _ReturnFormPageState extends State<ReturnFormPage> {
               decoration: BoxDecoration(
                 color: context.c.warningSoft,
                 border: Border.all(color: context.c.warningBorder),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(Radii.sm),
               ),
               child: Row(
                 children: [
@@ -650,7 +650,7 @@ class _ReturnFormPageState extends State<ReturnFormPage> {
         border: Border.all(
           color: selected == null ? context.c.line : context.c.warningBorder,
         ),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(Radii.sm),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -801,7 +801,7 @@ class _ReturnFormPageState extends State<ReturnFormPage> {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         border: Border.all(color: context.c.line),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(Radii.sm),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

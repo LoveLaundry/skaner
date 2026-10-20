@@ -398,7 +398,7 @@ class _Preview extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(Radii.lg),
         child: SizedBox(
           height: height,
           child: Stack(
@@ -436,7 +436,7 @@ class _Preview extends StatelessWidget {
                       height: 190,
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.white70, width: 2),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(Radii.xl),
                       ),
                     ),
                   ),

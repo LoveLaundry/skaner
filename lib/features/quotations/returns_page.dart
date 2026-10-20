@@ -353,7 +353,7 @@ class _ReturnCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: c.surfaceSunken,
                     border: Border.all(color: c.line),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(Radii.xs),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -370,7 +370,7 @@ class _ReturnCard extends StatelessWidget {
                               horizontal: 4, vertical: 1),
                           decoration: BoxDecoration(
                             color: c.surface3,
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(Radii.xs),
                           ),
                           child: Text(
                             line.specification,
@@ -420,7 +420,7 @@ class _ReturnCard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: c.warningSoft,
                 border: Border.all(color: c.warningBorder),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(Radii.sm),
               ),
               child: Column(
                 children: [

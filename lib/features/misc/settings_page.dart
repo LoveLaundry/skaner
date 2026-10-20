@@ -702,7 +702,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 margin: const EdgeInsets.only(right: 5),
                 decoration: BoxDecoration(
                   color: swatch,
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(Radii.xs),
                   border: Border.all(color: palette.line2),
                 ),
               ),

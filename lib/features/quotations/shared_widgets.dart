@@ -44,7 +44,7 @@ class OpsIcon extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         color: bg,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(Radii.md),
         border: Border.all(color: border),
       ),
       child: Icon(icon, size: size * 0.45, color: fg),

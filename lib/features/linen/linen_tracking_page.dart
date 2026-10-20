@@ -280,7 +280,7 @@ class _Destination extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: c.surface2,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(Radii.sm),
             ),
             child: Icon(icon, size: 18, color: c.fg2),
           ),
