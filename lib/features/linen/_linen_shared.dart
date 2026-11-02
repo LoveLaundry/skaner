@@ -185,40 +185,64 @@ final RegExp _codeParam = RegExp(
 );
 final RegExp _llToken = RegExp(r'\bLL-[A-Za-z0-9][A-Za-z0-9._-]*');
 final RegExp _codeShape = RegExp(r'^[A-Z0-9][A-Z0-9._-]{1,63}$');
+
+/// A code that arrives inside a URL has to be one of ours. `example.com` is a
+/// perfectly shaped token but never a linen, and looking it up 404s, which
+/// reads to the operator as a tag that has gone missing.
+final RegExp _codeInUrl = RegExp(r'^LL-[A-Za-z0-9][A-Za-z0-9._-]*$');
 final RegExp _wrappers = RegExp(r'''^[\s"'`<([{]+|[\s"'`>)\]}]+$''');
+
+/// NFC record headers and keyboard-scanner artefacts (NUL, the URI-record
+/// status byte, CR/LF, TAB) ride along with the payload and are not whitespace.
+final RegExp _controlChars = RegExp(r'[\x00-\x1F\x7F]');
+final RegExp _trailingSeparators = RegExp(r'[._-]+$');
 
 /// Turns whatever a printed tag carries into the identifier
 /// `/linens/by-code/{code}` expects, or `null` when the text is not a code.
 ///
-/// `linen-tag-generator.tsx` prints the bare `linen_id` (`LL-7K4P92`) and
-/// `linen-scanner.tsx` only trims and upper-cases what jsQR decodes, so a bare
-/// code is the canonical shape. Two others show up in the field as well — a
-/// deep link (`/scan?code=…`, or the code as a path segment) and a label read
-/// only in part — and a partly-read tag must not stop the operator, so those
-/// are extracted rather than rejected.
+/// `linen-tag-generator.tsx` prints the bare `linen_id` (`LL-7K4P92`), so a
+/// bare code is the canonical shape. Three others show up in the field — a
+/// deep link (`/scan?code=…`, or the code as a path segment, with or without a
+/// query string after it), a label read only in part, and the same text with
+/// scanner artefacts around it — and a partly-read tag must not stop the
+/// operator, so those are extracted rather than rejected.
+///
+/// Kept behaviourally identical to `features/linen/lib/linen-code.ts` in the
+/// web app, so a tag that resolves on one client resolves on the other.
 String? parseLinenCode(String? raw) {
-  var s = (raw ?? '').replaceAll(_wrappers, '').trim();
-  if (s.isEmpty) return null;
+  final original = _unwrap(raw ?? '');
+  if (original.isEmpty) return null;
 
-  final param = _codeParam.firstMatch(s);
+  final fromUrl =
+      original.contains('://') || original.toLowerCase().startsWith('www.');
+  var candidate = original;
+
+  final param = _codeParam.firstMatch(original);
   if (param != null) {
-    s = _percentDecode(param.group(1)!);
-  } else if (s.contains('://') || s.toLowerCase().startsWith('www.')) {
-    final segments =
-        s.split(RegExp(r'[/?#]')).where((p) => p.isNotEmpty).toList();
-    if (segments.isNotEmpty) s = _percentDecode(segments.last);
+    candidate = _percentDecode(param.group(1)!);
+  } else if (fromUrl) {
+    // In a deep link the code is a path segment; whatever follows `?` or `#`
+    // belongs to the link, not to the tag.
+    final segments = original
+        .split(RegExp(r'[?#]'))
+        .first
+        .split('/')
+        .where((p) => p.isNotEmpty)
+        .toList();
+    if (segments.isNotEmpty) candidate = _percentDecode(segments.last);
   }
 
-  s = s.replaceAll(_wrappers, '').trim().toUpperCase();
-  if (_codeShape.hasMatch(s)) return s;
+  candidate = _unwrap(candidate).toUpperCase();
+  if ((fromUrl ? _codeInUrl : _codeShape).hasMatch(candidate)) return candidate;
 
-  final embedded = _llToken.firstMatch(s);
-  if (embedded != null) {
-    final candidate = embedded.group(0)!.toUpperCase();
-    if (_codeShape.hasMatch(candidate)) return candidate;
-  }
-  return null;
+  final embedded = _llToken.firstMatch(original.toUpperCase());
+  return embedded?.group(0)!.replaceAll(_trailingSeparators, '');
 }
+
+String _unwrap(String value) => value
+    .replaceAll(_controlChars, ' ')
+    .replaceAll(_wrappers, '')
+    .trim();
 
 String _percentDecode(String value) {
   try {
