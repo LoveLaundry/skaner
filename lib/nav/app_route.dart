@@ -110,6 +110,7 @@ class AppRoutes {
 
   // Home
   static const String today = '/today';
+  static const String todaySheet = '/today-sheet';
   static const String dashboard = '/dashboard';
   static const String notifications = '/notifications';
 

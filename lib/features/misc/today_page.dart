@@ -499,6 +499,13 @@ class _TodayPageState extends State<TodayPage> {
 
   static const _actions = [
     (
+      label: 'Sheet',
+      hint: 'Today sheet entry',
+      icon: Icons.grid_on_outlined,
+      path: '/today-sheet',
+      main: true
+    ),
+    (
       label: 'Receive',
       hint: 'New gate pass',
       icon: Icons.assignment_outlined,

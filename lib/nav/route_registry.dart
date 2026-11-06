@@ -41,6 +41,7 @@ import '../features/misc/notifications_page.dart';
 import '../features/misc/profile_page.dart';
 import '../features/misc/settings_page.dart';
 import '../features/misc/today_page.dart';
+import '../features/misc/today_sheet_page.dart';
 import '../features/misc/users_page.dart';
 import '../features/quotations/bill_detail_page.dart';
 import '../features/quotations/bill_form_page.dart';
@@ -138,6 +139,14 @@ class AppRouteRegistry {
         bottomBar: true,
         tabIndex: 0,
         keywords: const ['home', 'start', 'overview'],
+      ),
+      AppRoutes.todaySheet: AppRoute(
+        path: AppRoutes.todaySheet,
+        label: 'Today Sheet',
+        builder: (_) => const TodaySheetPage(),
+        group: 'Operations',
+        icon: Icons.grid_on_outlined,
+        keywords: const ['today', 'sheet', 'daily', 'entry'],
       ),
       AppRoutes.quotations: AppRoute(
         path: AppRoutes.quotations,
