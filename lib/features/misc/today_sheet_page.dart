@@ -50,6 +50,7 @@ class _TodaySheetPageState extends State<TodaySheetPage> {
   List<Map<String, dynamic>> _clients = [];
   final Map<String, _ClientDraft> _drafts = {};
   final List<_ExpLine> _expenses = [_ExpLine()];
+  List<Map<String, dynamic>> _recordedExpenses = const [];
   bool _saving = false;
 
   static String _isoToday() {
@@ -102,6 +103,19 @@ class _TodaySheetPageState extends State<TodaySheetPage> {
           }
         }
         _drafts[name] = draft;
+      }
+      try {
+        final expData = await s.api.get(
+          ServiceNames.management,
+          '/api/expenses',
+          query: {'start_date': _date, 'end_date': _date, 'limit': 200},
+        );
+        final items = expData is Map<String, dynamic> ? expData['items'] : null;
+        _recordedExpenses = items is List
+            ? items.whereType<Map<String, dynamic>>().toList()
+            : const [];
+      } catch (_) {
+        _recordedExpenses = const [];
       }
       setState(() => _loading = false);
     } catch (e) {
@@ -427,6 +441,45 @@ class _TodaySheetPageState extends State<TodaySheetPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (_recordedExpenses.isNotEmpty) ...[
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('ALREADY RECORDED TODAY (${_recordedExpenses.length})',
+                        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.black45, letterSpacing: 0.5)),
+                    for (final e in _recordedExpenses)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                (e['category_name'] ?? e['description'] ?? 'Expense').toString(),
+                                style: const TextStyle(fontSize: 12),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Text(
+                              '${e['allocation'] == 'SHOP' && (e['client_name'] ?? '').toString().isNotEmpty ? '${e['client_name']} · ' : ''}LKR ${e['amount'] ?? 0}',
+                              style: const TextStyle(fontSize: 11, color: Colors.black54),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
             Row(
               children: [
                 const Expanded(
