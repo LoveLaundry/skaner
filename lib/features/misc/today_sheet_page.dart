@@ -325,19 +325,39 @@ class _TodaySheetPageState extends State<TodaySheetPage> {
 
   Widget _field(TextEditingController ctrl, String hint,
       {double? width, TextInputType? keyboard, List<String>? suggestions}) {
-    return SizedBox(
-      width: width,
-      child: TextField(
-        controller: ctrl,
-        keyboardType: keyboard,
-        decoration: InputDecoration(
-          hintText: hint,
-          isDense: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
-        ),
-      ),
+    final decoration = InputDecoration(
+      hintText: hint,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(6)),
     );
+    Widget field = TextField(
+      controller: ctrl,
+      keyboardType: keyboard,
+      decoration: decoration,
+    );
+    if (suggestions != null && suggestions.isNotEmpty) {
+      field = Autocomplete<String>(
+        optionsBuilder: (v) => v.text.trim().isEmpty
+            ? const Iterable<String>.empty()
+            : suggestions.where((n) => n.toLowerCase().contains(v.text.toLowerCase())),
+        onSelected: (v) => ctrl.text = v,
+        fieldViewBuilder: (_, textCtrl, focus, onSubmit) {
+          // Keep the caller's controller as the source of truth.
+          if (textCtrl.text != ctrl.text) {
+            textCtrl.value = ctrl.value;
+          }
+          return TextField(
+            controller: textCtrl,
+            focusNode: focus,
+            keyboardType: keyboard,
+            decoration: decoration,
+            onChanged: (v) => ctrl.text = v,
+          );
+        },
+      );
+    }
+    return SizedBox(width: width, child: field);
   }
 
   Widget _recvRow(_RecvLine l, List<String> itemNames, VoidCallback onRemove) {
