@@ -41,6 +41,7 @@ class _ExpLine {
 class _ClientDraft {
   final List<_RecvLine> receives = [];
   final List<_DelLine> deliveries = [];
+  final TextEditingController receivedBy = TextEditingController();
 }
 
 class _TodaySheetPageState extends State<TodaySheetPage> {
@@ -180,7 +181,11 @@ class _TodaySheetPageState extends State<TodaySheetPage> {
               })
           .toList();
       if (dItems.isNotEmpty) {
-        deliveries.add({'client_name': name, 'items': dItems});
+        deliveries.add({
+          'client_name': name,
+          'items': dItems,
+          if (d.receivedBy.text.trim().isNotEmpty) 'received_by': d.receivedBy.text.trim(),
+        });
       }
     }
 
@@ -307,6 +312,15 @@ class _TodaySheetPageState extends State<TodaySheetPage> {
                 Text('$avail on hand',
                     style: const TextStyle(fontSize: 11, color: Colors.black54)),
               ],
+            ),
+            TextField(
+              controller: d.receivedBy,
+              decoration: const InputDecoration(
+                hintText: 'Client rep (delivery sign-off)',
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 8),
             _sectionLabel('Received today'),
