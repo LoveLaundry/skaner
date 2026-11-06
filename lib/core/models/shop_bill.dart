@@ -329,6 +329,8 @@ class LegacyInvoice {
     required this.entries,
     required this.totalEntries,
     required this.grandTotal,
+    this.discount = 0,
+    this.laundryAmount,
     this.description,
     this.createdAt,
   });
@@ -340,6 +342,10 @@ class LegacyInvoice {
   final List<LegacyInvoiceEntry> entries;
   final int totalEntries;
   final double grandTotal;
+
+  /// Kept by the shop owner; the laundry is owed [laundryAmount].
+  final double discount;
+  final double? laundryAmount;
   final String? createdAt;
 
   factory LegacyInvoice.fromJson(Map<String, dynamic> j) => LegacyInvoice(
@@ -350,6 +356,10 @@ class LegacyInvoice {
         entries: asMapList(j['entries']).map(LegacyInvoiceEntry.fromJson).toList(),
         totalEntries: asInt(j['total_entries'], asMapList(j['entries']).length),
         grandTotal: asDouble(j['grand_total']),
+        discount: asDouble(j['discount']),
+        laundryAmount: j['laundry_amount'] == null
+            ? null
+            : asDouble(j['laundry_amount']),
         createdAt: asStringOrNull(j['created_at']),
       );
 }

@@ -37,6 +37,7 @@ class LegacyInvoicePage extends StatefulWidget {
 class _LegacyInvoicePageState extends State<LegacyInvoicePage> {
   final _shopName = TextEditingController();
   final _description = TextEditingController();
+  final _discount = TextEditingController();
   final _searchCtrl = TextEditingController();
 
   late final ResourceController<List<Map<String, dynamic>>> _controller;
@@ -66,6 +67,7 @@ class _LegacyInvoicePageState extends State<LegacyInvoicePage> {
   void dispose() {
     _shopName.dispose();
     _description.dispose();
+    _discount.dispose();
     _searchCtrl.dispose();
     for (final row in _rows) {
       row.dispose();
@@ -113,6 +115,17 @@ class _LegacyInvoicePageState extends State<LegacyInvoicePage> {
   double get _grandTotal =>
       _entries.fold<double>(0, (sum, e) => sum + numOf(e, const ['amount']));
 
+  /// The shop owner keeps the discount; the laundry is owed the remainder.
+  double get _discountAmount {
+    final raw =
+        double.tryParse(_discount.text.replaceAll(',', '').trim()) ?? 0;
+    if (raw < 0) return 0;
+    if (raw > _grandTotal) return _grandTotal;
+    return raw;
+  }
+
+  double get _laundryAmount => _grandTotal - _discountAmount;
+
   bool get _canSave =>
       _shopName.text.trim().isNotEmpty &&
       _entries.isNotEmpty &&
@@ -131,6 +144,7 @@ class _LegacyInvoicePageState extends State<LegacyInvoicePage> {
   void _clearForm() {
     _shopName.clear();
     _description.clear();
+    _discount.clear();
     for (final row in _rows) {
       row.dispose();
     }
@@ -152,6 +166,7 @@ class _LegacyInvoicePageState extends State<LegacyInvoicePage> {
           'shop_name': _shopName.text.trim(),
           if (_description.text.trim().isNotEmpty)
             'description': _description.text.trim(),
+          'discount': _discountAmount,
           'entries': _entries,
         },
       );
@@ -374,6 +389,21 @@ class _LegacyInvoicePageState extends State<LegacyInvoicePage> {
                             textCapitalization: TextCapitalization.sentences,
                           ),
                         ),
+                        const SizedBox(height: 12),
+                        AppField(
+                          label: 'Discount',
+                          optional: true,
+                          child: AppMoneyInput(
+                            controller: _discount,
+                            hint: '0.00',
+                            onChanged: (_) => setState(() {}),
+                          ),
+                        ),
+                        Text(
+                          'Kept by the shop owner — the laundry is owed the rest.',
+                          style: context.texts.labelSmall
+                              ?.copyWith(color: context.c.fgMuted),
+                        ),
                         const SizedBox(height: 14),
                         Row(
                           children: [
@@ -426,6 +456,19 @@ class _LegacyInvoicePageState extends State<LegacyInvoicePage> {
                           strong: true,
                           accent: true,
                         ),
+                        if (_discountAmount > 0) ...[
+                          const SizedBox(height: 4),
+                          TotalRow(
+                            'Discount (shop owner)',
+                            '−${Fmt.money(_discountAmount)}',
+                          ),
+                          const SizedBox(height: 4),
+                          TotalRow(
+                            'Amount for laundry',
+                            Fmt.money(_laundryAmount),
+                            strong: true,
+                          ),
+                        ],
                         const SizedBox(height: 14),
                         AppButton(
                           label: 'Save invoice',
@@ -851,6 +894,12 @@ class _LegacySheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final entries = entriesOf(invoice);
     final total = numOf(invoice, const ['grand_total']);
+    final discount = numOf(invoice, const ['discount']);
+    final laundryAmount = numOf(
+      invoice,
+      const ['laundry_amount'],
+      total - discount,
+    );
     final description = str(invoice, const ['description']);
     final number = str(invoice, const ['invoice_number']);
 
@@ -1007,6 +1056,39 @@ class _LegacySheet extends StatelessWidget {
                 ),
               ],
             ),
+            if (discount > 0) ...[
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Expanded(child: SizedBox()),
+                  const Text(
+                    'Discount (shop owner)',
+                    style: TextStyle(color: _muted, fontSize: 11),
+                  ),
+                  const SizedBox(width: 14),
+                  Text(
+                    '−${Fmt.money(discount)}',
+                    style: const TextStyle(color: _muted, fontSize: 11),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Expanded(child: SizedBox()),
+                  const Text(
+                    'Amount for Laundry',
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+                  ),
+                  const SizedBox(width: 14),
+                  Text(
+                    Fmt.money(laundryAmount),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800, fontSize: 13),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: 26),
             Row(
               children: [
