@@ -12,7 +12,6 @@ import '../../ui/kit/feedback.dart';
 import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
-import '../management/_management_shared.dart';
 import '_linen_shared.dart';
 import 'linen_tracking_detail_page.dart';
 import '../../ui/theme.dart';

@@ -108,87 +108,28 @@ void main() {
   });
 
   group('route gating is not open to every role', () {
-    // The defect this change fixes: these were all reachable by a bare STAFF
-    // session because they declared no permission at all.
-    const managementPaths = <String>[
-      '/management',
-      '/dashboard',
-      '/management/employees',
-      '/management/roles',
-      '/management/permissions',
-      '/payroll',
-      '/management/expenses',
-      '/management/reports',
-      '/database-sync',
-      '/backup-restore',
-      '/workers',
-    ];
-
-    test('staff cannot open any management or system surface', () {
-      for (final path in managementPaths) {
-        expect(
-          routeAllows(path, 'STAFF'),
-          isFalse,
-          reason: 'STAFF must not reach $path',
-        );
-      }
-    });
-
-    test('a manager reaches management but not PLATFORM_ADMIN-only surface', () {
-      for (final path in managementPaths) {
-        expect(routeAllows(path, 'MANAGER'), isTrue, reason: path);
-      }
-    });
-
-    test('a platform admin reaches every management surface', () {
-      for (final path in managementPaths) {
-        expect(routeAllows(path, 'PLATFORM_ADMIN'), isTrue, reason: path);
-      }
+    test('staff cannot open the admin-only settings surface', () {
+      expect(routeAllows('/settings', 'STAFF'), isFalse);
+      expect(routeAllows('/settings', 'MANAGER'), isTrue);
+      expect(routeAllows('/settings', 'ADMIN'), isTrue);
+      expect(routeAllows('/settings', 'PLATFORM_ADMIN'), isTrue);
     });
 
     test('operational surfaces stay open to staff', () {
       for (final path in const <String>[
         '/today',
-        '/quotations',
+        '/today-sheet',
         '/bills',
         '/gate-passes',
         '/deliveries',
         '/returns',
         '/linen/scanner',
+        '/statements',
+        '/entry-flow',
         '/profile',
       ]) {
         expect(routeAllows(path, 'STAFF'), isTrue, reason: path);
       }
-    });
-
-    test('users route needs the grant even for a manager', () {
-      expect(routeAllows('/users', 'STAFF'), isFalse);
-      expect(routeAllows('/users', 'ADMIN'), isTrue);
-    });
-  });
-
-  group('landing path', () {
-    String landing(String? roleId, {List<String> permissions = const []}) =>
-        landingPathFor(
-          roleId: roleId,
-          permissionList: permissions,
-          platformAdmin: isPlatformAdminRole(roleId),
-          fallback: AppRoutes.today,
-          candidates: const [
-            LandingCandidate(AppRoutes.dashboard, AccessSpec(adminOnly: true)),
-            LandingCandidate(AppRoutes.today, AccessSpec()),
-          ],
-        );
-
-    test('an admin lands on the dashboard', () {
-      expect(landing('ADMIN'), AppRoutes.dashboard);
-      expect(landing('MANAGER'), AppRoutes.dashboard);
-      expect(landing('PLATFORM_ADMIN'), AppRoutes.dashboard);
-    });
-
-    test('everyone else lands on today', () {
-      expect(landing('STAFF'), AppRoutes.today);
-      expect(landing(null), AppRoutes.today);
     });
   });
 }

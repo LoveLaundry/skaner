@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../config/api_config.dart';
 import '../../core/api/api_client.dart';
@@ -13,6 +14,14 @@ import '../../ui/theme.dart';
 /// The linen module lives on the bills service, exactly as `billsApi` does in
 /// `linen.service.ts`.
 const String linenService = ServiceNames.bills;
+
+/// CSV exports go to the clipboard: a phone has no download folder the app can
+/// write to, and the server hands back text rather than a file handle.
+Future<void> copyExport(BuildContext context, String text, String label) async {
+  await Clipboard.setData(ClipboardData(text: text));
+  if (!context.mounted) return;
+  AppToast.success(context, '$label copied to clipboard');
+}
 
 class LinenApi {
   LinenApi._();

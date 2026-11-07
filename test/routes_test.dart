@@ -44,15 +44,15 @@ void main() {
 
   group('lookup', () {
     test('prefers a literal segment over a parameter', () {
-      expect(AppRoutes.lookup('/quotations/new')!.path, '/quotations/new');
+      expect(AppRoutes.lookup('/deliveries/new')!.path, '/deliveries/new');
       expect(AppRoutes.lookup('/bills/new')!.path, '/bills/new');
       expect(AppRoutes.lookup('/gate-passes/new')!.path, '/gate-passes/new');
-      expect(AppRoutes.lookup('/workers/new')!.path, '/workers/new');
+      expect(AppRoutes.lookup('/returns/new')!.path, '/returns/new');
     });
 
     test('matches parameterised paths', () {
-      expect(AppRoutes.lookup('/quotations/abc')!.path, '/quotations/:id');
       expect(AppRoutes.lookup('/bills/9')!.path, '/bills/:id');
+      expect(AppRoutes.lookup('/deliveries/9')!.path, '/deliveries/:id');
       expect(
         AppRoutes.lookup('/hotel-linen-flow/Cinnamon')!.path,
         '/hotel-linen-flow/:hotel',
@@ -61,7 +61,7 @@ void main() {
     });
 
     test('rejects a path of the wrong depth', () {
-      expect(AppRoutes.lookup('/quotations/abc/extra/extra'), isNull);
+      expect(AppRoutes.lookup('/bills/abc/extra/extra'), isNull);
       expect(AppRoutes.lookup('/nope'), isNull);
     });
 
@@ -75,8 +75,8 @@ void main() {
   group('paramsFor', () {
     test('extracts every named parameter', () {
       expect(
-        AppRoutes.paramsFor('/quotations/:id/edit', '/quotations/42/edit'),
-        {'id': '42'},
+        AppRoutes.paramsFor('/hotel-linen-flow/:hotel', '/hotel-linen-flow/Cinnamon'),
+        {'hotel': 'Cinnamon'},
       );
       expect(
         AppRoutes.paramsFor('/linen/garment/:code', '/linen/garment/LL-9'),
@@ -86,21 +86,15 @@ void main() {
         AppRoutes.paramsFor('/gate-passes/:id/slip', '/gate-passes/7/slip'),
         {'id': '7'},
       );
-      expect(AppRoutes.paramsFor('/quotations', '/quotations'), <String, String>{});
+      expect(AppRoutes.paramsFor('/bills', '/bills'), <String, String>{});
     });
   });
 
   group('guest access', () {
-    test('only the login and guest pages are open to a signed-out visitor', () {
+    test('only the login page is open to a signed-out visitor', () {
       final open = AppRoutes.table.values.where((r) => r.guest).map((r) => r.path);
-      expect(open, containsAll(<String>[
-        AppRoutes.login,
-        AppRoutes.guestShop,
-        AppRoutes.guestTrack,
-        AppRoutes.guestQuotation,
-        AppRoutes.guestPickup,
-      ]));
-      expect(open.length, 5);
+      expect(open, contains(AppRoutes.login));
+      expect(open.length, 1);
     });
   });
 
@@ -124,10 +118,10 @@ void main() {
       // whole shell. The admin dashboard is the path that did it in practice.
       final list = tabs();
       for (final path in <String>[
-        AppRoutes.dashboard,
         AppRoutes.home,
-        AppRoutes.notifications,
-        '/management/reports',
+        AppRoutes.statements,
+        '/settings',
+        '/entry-flow',
         '/gate-passes/9/slip',
         '/nonsense',
       ]) {
@@ -139,10 +133,10 @@ void main() {
 
     test('a detail page under a tab keeps that tab selected', () {
       final list = tabs();
-      final quotations = list.firstWhere((r) => r.path == AppRoutes.quotations);
+      final bills = list.firstWhere((r) => r.path == AppRoutes.bills);
       expect(
-        AppShell.selectedIndexFor(list, '${AppRoutes.quotations}/LL-9'),
-        list.indexOf(quotations),
+        AppShell.selectedIndexFor(list, '${AppRoutes.bills}/LL-9'),
+        list.indexOf(bills),
       );
     });
   });

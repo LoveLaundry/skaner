@@ -111,15 +111,6 @@ class AppRoutes {
   // Home
   static const String today = '/today';
   static const String todaySheet = '/today-sheet';
-  static const String dashboard = '/dashboard';
-  static const String notifications = '/notifications';
-
-  // Quotations
-  static const String quotations = '/quotations';
-  static const String quotationNew = '/quotations/new';
-  static const String quotationEdit = '/quotations/:id/edit';
-  static const String quotationDetail = '/quotations/:id';
-  static const String quotationPrint = '/quotations/:id/print';
 
   // Bills
   static const String bills = '/bills';
@@ -127,7 +118,6 @@ class AppRoutes {
   static const String billDetail = '/bills/:id';
   static const String billPrint = '/bills/:id/print';
   static const String statements = '/statements';
-  static const String invoiceNew = '/invoices/new';
 
   // Gate passes
   static const String gatepasses = '/gate-passes';
@@ -140,29 +130,13 @@ class AppRoutes {
   static const String deliveryNew = '/deliveries/new';
   static const String deliveryDetail = '/deliveries/:id';
   static const String deliverySlips = '/deliveries/slips';
-  static const String dispatch = '/dispatch';
-  static const String dispatchDetail = '/dispatch/:id';
 
   // Returns
   static const String returns = '/returns';
   static const String returnNew = '/returns/new';
   static const String returnDetail = '/returns/:id';
 
-  // Shop bills
-  static const String shopBills = '/shop-bills';
-  static const String shopBillNew = '/shop-bills/new';
-  static const String shopBillDetail = '/shop-bills/:id';
-  static const String shopBillPrint = '/shop-bills/:id/print';
-  static const String shopBillDashboard = '/shop-bills/dashboard';
-  static const String shopBillTemplates = '/shop-bill-templates';
-  static const String legacyInvoice = '/legacy-invoice';
-  static const String clientStatement = '/client-statement';
-
   // Workers
-  static const String workers = '/workers';
-  static const String workerNew = '/workers/new';
-  static const String workerDetail = '/workers/:id';
-  static const String workerPayroll = '/workers/payroll';
 
   // Linen
   static const String hotelLinenFlow = '/hotel-linen-flow';
@@ -173,43 +147,12 @@ class AppRoutes {
   static const String linenScanner = '/linen/scanner';
   static const String garmentDetail = '/linen/garment/:code';
 
-  // Management
-  static const String management = '/management';
-  static const String managementReports = '/management/reports';
-  static const String managementEmployees = '/management/employees';
-  static const String managementEmployeeNew = '/management/employees/new';
-  static const String managementEmployeeDetail = '/management/employees/:id';
-  static const String managementDepartments = '/management/departments';
-  static const String managementRoles = '/management/roles';
-  static const String managementPermissions = '/management/permissions';
-  static const String managementAttendance = '/management/attendance';
-  static const String managementLeave = '/management/leave';
-  static const String managementPerformance = '/management/performance';
-  static const String managementTraining = '/management/training';
-  static const String managementAnnouncements = '/management/announcements';
-  static const String managementExpenses = '/management/expenses';
-  static const String payroll = '/payroll';
-  static const String reports = '/reports';
-
   // Insights, chat, system
-  static const String aiInsights = '/ai-insights';
-  static const String liveChat = '/live-chat';
-  static const String users = '/users';
   static const String settings = '/settings';
   static const String profile = '/profile';
-  static const String databaseSync = '/database-sync';
-  static const String backupRestore = '/backup-restore';
 
   // Derived screens the web app links to but has no route for
   static const String entryFlow = '/entry-flow';
-  static const String exportCenter = '/export';
-  static const String priceList = '/price-list';
-
-  // Guest (no session required)
-  static const String guestShop = '/guest/shop';
-  static const String guestTrack = '/guest/track';
-  static const String guestQuotation = '/guest/quotation';
-  static const String guestPickup = '/guest/pickup';
 
   /// Registered in [register] and consumed by the navigator.
   static final Map<String, AppRoute> table = {};

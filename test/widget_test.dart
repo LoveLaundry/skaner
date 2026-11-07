@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:love_mobi/features/misc/dashboard_page.dart';
 import 'package:love_mobi/nav/app_route.dart';
 import 'package:love_mobi/ui/kit/data.dart';
 import 'package:love_mobi/ui/shell/app_shell.dart';
 import 'package:love_mobi/ui/theme.dart';
 
 void main() {
-  testWidgets('dashboard KPI cards fit a narrow phone layout', (tester) async {
+  testWidgets('stat cards fit a narrow phone layout', (tester) async {
     tester.view.physicalSize = const Size(320, 640);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -26,7 +25,7 @@ void main() {
               physics: const NeverScrollableScrollPhysics(),
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
-              childAspectRatio: dashboardKpiCardAspectRatio,
+              childAspectRatio: 0.95,
               children: [
                 for (final label in const [
                   'Revenue',
