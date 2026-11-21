@@ -28,6 +28,7 @@ dependencies:
   # ── Scanning ────────────────────────────────────────────────────────────────
   mobile_scanner: ^5.2.3
   permission_handler: ^11.3.1
+  flutter_bluetooth_serial: ^0.4.0
 
   # ── Crypto (AI request signing + idempotency keys) ──────────────────────────
   crypto: ^3.0.5
@@ -53,6 +54,9 @@ dependencies:
   # ── Misc ────────────────────────────────────────────────────────────────────
   collection: ^1.19.0
   url_launcher: ^6.3.1
+
+  # ── WebSockets for real-time sync ──────────────────────────────────────────
+  web_socket_channel: ^2.4.0
 
 dev_dependencies:
   flutter_test:

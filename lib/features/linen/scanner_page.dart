@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../core/api/bluetooth_scanner.dart';
 import '../../core/models/json.dart' as json;
 import '../../core/models/linen.dart';
 import '../../core/utils/formatting.dart';
@@ -18,9 +20,9 @@ import 'linen_tracking_detail_page.dart';
 
 /// Port of `features/linen/pages/linen-scanner.tsx`.
 ///
-/// Camera and typed entry are peers, not a primary path and a fallback: the
-/// manual field is on screen whatever the camera is doing, so a denied
-/// permission, a device with no camera, or a tag that is too damaged to decode
+/// Camera, Bluetooth, and typed entry are peers, not a primary path and a fallback:
+/// the manual field is on screen whatever the camera or Bluetooth is doing, so a
+/// denied permission, a device with no camera, or a tag that is too damaged to decode
 /// never stops the lookup. A decode is never trusted straight to the API — it
 /// goes through [parseLinenCode] first, because a tag printed by another
 /// system can arrive as a URL.
@@ -47,18 +49,44 @@ class _ScannerPageState extends State<ScannerPage> {
     ],
   );
 
+  final _bluetooth = BluetoothScannerService();
   ResourceController<LinenItem>? _result;
   String? _code;
   String? _error;
   bool _cameraOn = false;
   bool _starting = false;
+  bool _bluetoothOn = false;
+  bool _showBluetoothDevices = false;
   String? _pending;
   final List<String> _history = [];
+  final List<BluetoothDevice> _bluetoothDevices = [];
+  StreamSubscription<String>? _bluetoothSubscription;
+  StreamSubscription<BluetoothStatus>? _bluetoothStatusSubscription;
 
   @override
   void initState() {
     super.initState();
     _scanner.addListener(_onScanner);
+    _setupBluetoothListeners();
+  }
+
+  void _setupBluetoothListeners() {
+    _bluetoothSubscription = _bluetooth.scannedCodes.listen((code) {
+      if (mounted) {
+        _processScannedCode(code);
+      }
+    });
+
+    _bluetoothStatusSubscription = _bluetooth.status.listen((status) {
+      if (mounted) {
+        setState(() {
+          _bluetoothOn = status.isConnected;
+          if (status.isError) {
+            _error = 'Bluetooth error: ${status.label}';
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -68,6 +96,9 @@ class _ScannerPageState extends State<ScannerPage> {
     _result?.dispose();
     _codeCtrl.dispose();
     unawaited(_scanner.dispose());
+    _bluetoothSubscription?.cancel();
+    _bluetoothStatusSubscription?.cancel();
+    _bluetooth.dispose();
     super.dispose();
   }
 
@@ -95,6 +126,13 @@ class _ScannerPageState extends State<ScannerPage> {
                   : _toggleTorch,
             ),
           AppButton.icon(
+            icon: _bluetoothOn
+                ? Icons.bluetooth_connected
+                : Icons.bluetooth,
+            tooltip: _bluetoothOn ? 'Disconnect Bluetooth' : 'Connect Bluetooth',
+            onPressed: _bluetoothOn ? _disconnectBluetooth : _showBluetoothDialog,
+          ),
+          AppButton.icon(
             icon: _cameraOn
                 ? Icons.no_photography_outlined
                 : Icons.photo_camera_outlined,
@@ -112,6 +150,11 @@ class _ScannerPageState extends State<ScannerPage> {
               onDetect: _onDetect,
               onRetry: _startCamera,
               starting: _starting,
+            ),
+          if (_bluetoothOn)
+            _BluetoothStatusIndicator(
+              device: _bluetooth.connectedDevice,
+              onDisconnect: _disconnectBluetooth,
             ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -219,19 +262,33 @@ class _ScannerPageState extends State<ScannerPage> {
           SizedBox(
             height: 200,
             child: AppEmptyState(
-              title: _cameraOn ? 'Point at a tag' : 'Ready to scan',
+              title: _cameraOn || _bluetoothOn ? 'Scanning active' : 'Ready to scan',
               message: _cameraOn
                   ? 'Scanning is automatic. Or type the code below.'
-                  : 'Start the camera or type the code on the tag.',
+                  : _bluetoothOn
+                      ? 'Bluetooth scanner connected. Scanning is automatic.'
+                      : 'Start the camera, connect Bluetooth, or type the code on the tag.',
               icon: Icons.qr_code_scanner,
-              action: _cameraOn
-                  ? null
-                  : AppButton(
-                      label: 'Start camera',
-                      icon: Icons.photo_camera_outlined,
-                      variant: AppButtonVariant.primary,
-                      onPressed: _startCamera,
-                    ),
+              action: !_cameraOn && !_bluetoothOn
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AppButton(
+                          label: 'Camera',
+                          icon: Icons.photo_camera_outlined,
+                          variant: AppButtonVariant.primary,
+                          onPressed: _startCamera,
+                        ),
+                        const SizedBox(width: 8),
+                        AppButton(
+                          label: 'Bluetooth',
+                          icon: Icons.bluetooth,
+                          variant: AppButtonVariant.secondary,
+                          onPressed: _showBluetoothDialog,
+                        ),
+                      ],
+                    )
+                  : null,
             ),
           ),
         ],
@@ -301,6 +358,82 @@ class _ScannerPageState extends State<ScannerPage> {
       await _scanner.toggleTorch();
     } on MobileScannerException {
       if (mounted) setState(() {});
+    }
+  }
+
+  Future<void> _showBluetoothDialog() async {
+    setState(() => _showBluetoothDevices = true);
+    final devices = await _bluetooth.discoverDevices();
+    if (!mounted) return;
+    setState(() {
+      _bluetoothDevices.clear();
+      _bluetoothDevices.addAll(devices);
+    });
+
+    if (mounted) {
+      _showDeviceSelectionDialog();
+    }
+  }
+
+  void _showDeviceSelectionDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Select Bluetooth Scanner'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: _bluetoothDevices.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Text('No devices found. Make sure your scanner is in pairing mode.'),
+                )
+              : ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _bluetoothDevices.length,
+                  itemBuilder: (context, index) {
+                    final device = _bluetoothDevices[index];
+                    return ListTile(
+                      leading: const Icon(Icons.bluetooth),
+                      title: Text(device.name ?? 'Unknown Device'),
+                      subtitle: Text(device.address),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _connectBluetooth(device);
+                      },
+                    );
+                  },
+                ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _connectBluetooth(BluetoothDevice device) async {
+    setState(() => _error = null);
+    final success = await _bluetooth.connect(device);
+    if (!mounted) return;
+    if (!success) {
+      setState(() => _error = 'Failed to connect to ${device.name ?? device.address}');
+    }
+  }
+
+  Future<void> _disconnectBluetooth() async {
+    await _bluetooth.disconnect();
+    if (mounted) {
+      setState(() => _bluetoothOn = false);
+    }
+  }
+
+  void _processScannedCode(String code) {
+    final parsed = parseLinenCode(code);
+    if (parsed != null) {
+      _lookupTyped(parsed);
     }
   }
 
@@ -378,6 +511,44 @@ String _cameraErrorText(MobileScannerException e) => switch (e.errorCode) {
         'Scanning is not supported on this device. Type the code below instead.',
       _ => e.errorDetails?.message ?? 'The camera could not be started.',
     };
+
+class _BluetoothStatusIndicator extends StatelessWidget {
+  const _BluetoothStatusIndicator({
+    required this.device,
+    required this.onDisconnect,
+  });
+
+  final BluetoothDevice? device;
+  final VoidCallback onDisconnect;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.c;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      color: c.success.withOpacity(0.1),
+      child: Row(
+        children: [
+          Icon(Icons.bluetooth_connected, size: 16, color: c.success),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Connected to ${device?.name ?? device?.address ?? 'Scanner'}',
+              style: TextStyle(color: c.success, fontSize: 12),
+            ),
+          ),
+          TextButton(
+            onPressed: onDisconnect,
+            child: Text(
+              'Disconnect',
+              style: TextStyle(color: c.success, fontSize: 12),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _Preview extends StatelessWidget {
   const _Preview({

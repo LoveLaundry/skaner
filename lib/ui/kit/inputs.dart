@@ -331,7 +331,6 @@ class AppMoneyInput extends StatelessWidget {
       controller: controller,
       enabled: enabled,
       readOnly: readOnly,
-      onChanged: onChanged,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),

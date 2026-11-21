@@ -121,3 +121,36 @@ bool canAccess({
 
   return true;
 }
+
+/// A candidate landing destination, in preference order.
+class LandingCandidate {
+  const LandingCandidate(this.path, this.spec);
+
+  final String path;
+  final AccessSpec spec;
+}
+
+/// The best landing path for a session.
+///
+/// Mirrors the web `landingPathFor`: a platform session lands on its own
+/// surface, a tenant session lands on the first candidate it may open, and
+/// [fallback] is used when none match.
+String landingPathFor({
+  required String? roleId,
+  required List<String> permissionList,
+  required List<LandingCandidate> candidates,
+  required String fallback,
+  bool platformAdmin = false,
+}) {
+  for (final candidate in candidates) {
+    if (canAccess(
+      roleId: roleId,
+      permissionList: permissionList,
+      spec: candidate.spec,
+      platformAdmin: platformAdmin,
+    )) {
+      return candidate.path;
+    }
+  }
+  return fallback;
+}

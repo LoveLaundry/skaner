@@ -10,10 +10,21 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/theme.dart';
 
+/// User role for dual login support
+enum UserRole {
+  laundry('Laundry Operations', Icons.local_laundry_service_outlined),
+  hotel('Hotel Linen Room', Icons.hotel_outlined);
+
+  const UserRole(this.label, this.icon);
+  final String label;
+  final IconData icon;
+}
+
 /// Port of `features/auth/pages/login-page.tsx` + `features/auth/services`.
 ///
 /// The user service is never queued, so a failed sign-in fails loudly instead
 /// of silently replaying when the connection returns.
+/// Enhanced with dual login support for laundry and hotel sides.
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, this.guestRouteLabel, this.onGuest});
 
@@ -30,6 +41,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _showPw = false;
   bool _busy = false;
   String? _error;
+  UserRole _selectedRole = UserRole.laundry;
 
   @override
   void dispose() {
@@ -59,6 +71,7 @@ class _LoginPageState extends State<LoginPage> {
         body: {
           'username': _username.text.trim(),
           'password': _password.text,
+          'role': _selectedRole.name, // Send role for dual login
         },
         includeAuth: false,
       );
@@ -72,7 +85,11 @@ class _LoginPageState extends State<LoginPage> {
         throw ApiException('Sign-in response was missing the session');
       }
       final user = AppUser.fromJson(Map<String, dynamic>.from(rawUser));
+      // Store selected role for role-based features
       await auth.login(token, user);
+      // Save role preference locally
+      final prefs = await services.storage;
+      await prefs.setString('selected_role', _selectedRole.name);
       await services.onSessionChanged();
       if (mounted) setState(() {});
     } on ApiException catch (e) {
@@ -109,6 +126,35 @@ class _LoginPageState extends State<LoginPage> {
                       style: t.bodyMedium?.copyWith(color: c.fgMuted),
                     ),
                     const SizedBox(height: 22),
+                    // Role selection for dual login
+                    AppField(
+                      label: 'Select your role',
+                      required: true,
+                      child: Column(
+                        children: [
+                          for (final role in UserRole.values)
+                            RadioListTile<UserRole>(
+                              title: Row(
+                                children: [
+                                  Icon(role.icon, size: 18, color: c.fg2),
+                                  const SizedBox(width: 8),
+                                  Text(role.label, style: t.bodyMedium),
+                                ],
+                              ),
+                              value: role,
+                              groupValue: _selectedRole,
+                              onChanged: (value) {
+                                if (value != null) {
+                                  setState(() => _selectedRole = value);
+                                }
+                              },
+                              activeColor: c.brand,
+                              contentPadding: EdgeInsets.zero,
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 18),
                     if (_error != null) ...[
                       AppNotice(message: _error!, tone: AppTone.danger),
                       const SizedBox(height: 14),
@@ -154,11 +200,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 20),
                     AppButton(
-                      label: 'Sign in',
+                      label: 'Sign in as ${_selectedRole.label}',
                       variant: AppButtonVariant.primary,
                       size: AppButtonSize.lg,
                       expand: true,
-                      icon: Icons.login,
+                      icon: _selectedRole.icon,
                       loading: _busy,
                       onPressed: _canSubmit ? _submit : null,
                     ),
