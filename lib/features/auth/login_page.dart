@@ -88,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
       // Store selected role for role-based features
       await auth.login(token, user);
       // Save role preference locally
-      final prefs = await services.storage;
+      final prefs = services.storage;
       await prefs.setString('selected_role', _selectedRole.name);
       await services.onSessionChanged();
       if (mounted) setState(() {});

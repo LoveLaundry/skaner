@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../config/api_config.dart';
-import '../../state/app_scope.dart';
 
 /// Real-time sync service for instant updates from backend
 /// Uses WebSocket connections for real-time data synchronization
@@ -58,7 +57,7 @@ class RealtimeSyncService {
       _statusController.add(SyncStatus.connected);
     } catch (e) {
       _isConnecting = false;
-      _statusController.add(SyncStatus.error(e.toString()));
+      _statusController.add(SyncStatus.error);
       _scheduleReconnect();
     }
   }
@@ -109,7 +108,7 @@ class RealtimeSyncService {
 
   void _onError(error) {
     debugPrint('WebSocket error: $error');
-    _statusController.add(SyncStatus.error(error.toString()));
+    _statusController.add(SyncStatus.error);
     _scheduleReconnect();
   }
 

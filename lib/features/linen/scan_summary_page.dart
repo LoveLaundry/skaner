@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../config/api_config.dart';
 import '../../core/models/linen.dart';
 import '../../core/utils/formatting.dart';
 import '../../state/app_scope.dart';
@@ -36,7 +37,7 @@ class _ScanSummaryPageState extends State<ScanSummaryPage> {
     try {
       // Load from local storage or fetch from API
       final services = AppScope.read(context);
-      final prefs = await services.storage;
+      final prefs = services.storage;
       final todayScansJson = prefs.getString('today_scans');
 
       if (todayScansJson != null) {
@@ -47,7 +48,7 @@ class _ScanSummaryPageState extends State<ScanSummaryPage> {
         });
       } else {
         // Fetch from API
-        final payload = await services.api.get(
+        await services.api.get(
           ServiceNames.bills,
           '/linens/scans/today',
         );
@@ -294,13 +295,10 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.c;
     return AppFilterChip(
       label: '${linenStatusLabels[status]} ($count)',
       selected: true,
       onTap: null,
-      backgroundColor: linenStatusTone(status).surface(c).withOpacity(0.3),
-      selectedColor: linenStatusTone(status).surface(c),
     );
   }
 }

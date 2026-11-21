@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/api/api_client.dart';
 import '../core/api/connectivity_service.dart';
@@ -30,6 +31,7 @@ class AppServices {
     required this.auth,
     required this.theme,
     required this.hotels,
+    required this.storage,
   });
 
   final ConnectivityService connectivity;
@@ -40,9 +42,11 @@ class AppServices {
   final AuthState auth;
   final ThemeState theme;
   final HotelScope hotels;
+  final SharedPreferences storage;
 
   static Future<AppServices> boot() async {
     final connectivity = ConnectivityService();
+    final storage = await SharedPreferences.getInstance();
     final outbox = await OutboxStore().open();
     final api = ApiClient(connectivity: connectivity, outbox: outbox);
     final cache = QueryCache();
@@ -64,6 +68,7 @@ class AppServices {
       auth: auth,
       theme: ThemeState(),
       hotels: HotelScope(),
+      storage: storage,
     );
 
     // A new write must wake the engine immediately. The engine holds this same

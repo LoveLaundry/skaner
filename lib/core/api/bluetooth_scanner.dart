@@ -99,14 +99,14 @@ class BluetoothScannerService {
         },
         onError: (error) {
           debugPrint('Bluetooth connection error: $error');
-          _statusController.add(BluetoothStatus.error(error.toString()));
+          _statusController.add(BluetoothStatus.error);
         },
       );
 
       return true;
     } catch (e) {
       debugPrint('Failed to connect to Bluetooth device: $e');
-      _statusController.add(BluetoothStatus.error(e.toString()));
+      _statusController.add(BluetoothStatus.error);
       _connection = null;
       connectedDevice = null;
       return false;

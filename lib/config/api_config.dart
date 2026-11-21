@@ -35,6 +35,7 @@ class ApiConfig {
   static const String _kWorkers = 'api.workers';
   static const String _kManagement = 'api.management';
   static const String _kAi = 'api.ai';
+  static const String _kWs = 'api.ws';
 
   /// Live deployment.
   static const String defaultQuotation = 'https://quotation-service-three.vercel.app';
@@ -93,6 +94,10 @@ class ApiConfig {
   static String get workersBase => _resolve(_kWorkers, defaultWorkers, localWorkers);
   static String get managementBase => _resolve(_kManagement, defaultManagement, localManagement);
   static String get aiBase => _resolve(_kAi, defaultAi, localAi);
+
+  /// WebSocket endpoint for linen/live updates, derived from the management service.
+  static String get wsUrl =>
+      _resolve(_kWs, defaultManagement, localManagement).replaceFirst(RegExp(r'^http'), 'ws');
 
   static String baseFor(String service) => switch (service) {
         ServiceNames.quotation => quotationBase,
