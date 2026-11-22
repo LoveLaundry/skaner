@@ -11,6 +11,8 @@ import '../../ui/kit/primitives.dart';
 import '../../ui/theme.dart';
 import 'quotation_model.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// Port of `features/quotations/pages/quotation-form-page.tsx`.
 ///
 /// The document is a price list: every line carries a rate and never a
@@ -388,7 +390,7 @@ class _TagToggle extends StatelessWidget {
                         value == option.$1 ? c.surface : c.surfaceSunken,
                     borderRadius: BorderRadius.circular(Radii.md),
                     border: Border.all(
-                      color: value == option.$1 ? c.brand : Colors.transparent,
+                      color: value == option.$1 ? c.brand : LLColors.transparent,
                     ),
                   ),
                   child: Row(

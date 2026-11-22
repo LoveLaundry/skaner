@@ -20,6 +20,8 @@ import '../../ui/theme.dart';
 import '../quotations/print_paper.dart';
 import 'shop_bill_model.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// Port of `features/shop-bills/pages/legacy-invoice-page.tsx`.
 ///
 /// This is the paper-bill aggregator: an operator types the old bill dates,
@@ -285,7 +287,7 @@ class _LegacyInvoicePageState extends State<LegacyInvoicePage> {
     final bytes = await showDialog<Uint8List>(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.transparent,
+      barrierColor: LLColors.transparent,
       builder: (_) => _PrintHost(invoice: invoice, signature: signature),
     );
     return bytes ?? Uint8List(0);
@@ -856,7 +858,7 @@ class _LegacySheet extends StatelessWidget {
 
     return Container(
       width: 420,
-      color: Colors.white,
+      color: LLColors.white,
       padding: const EdgeInsets.fromLTRB(28, 26, 28, 24),
       child: DefaultTextStyle(
         style: const TextStyle(color: _ink, fontSize: 11.5),

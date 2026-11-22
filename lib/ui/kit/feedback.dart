@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../theme.dart';
 import 'primitives.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// Port of `components/ui/loading-spinner.tsx` + `LoveLoader.tsx`.
 class AppSpinner extends StatelessWidget {
   const AppSpinner({super.key, this.size = 18, this.color, this.strokeWidth = 2});
@@ -82,7 +84,7 @@ class _AppSkeletonState extends State<AppSkeleton>
   @override
   Widget build(BuildContext context) {
     final c = context.c;
-    final base = context.isDark ? c.surface3 : const Color(0xFFEEF0F4);
+    final base = context.isDark ? c.surface3 : LLColors.canvas;
     final via = c.line;
     return AnimatedBuilder(
       animation: _ctrl,

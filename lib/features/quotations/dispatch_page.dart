@@ -17,6 +17,8 @@ import 'dispatch_detail_page.dart';
 import 'quotation_model.dart';
 import 'shared_widgets.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// Port of `pages/dispatch-page.tsx`.
 ///
 /// Dispatch reuses the deliveries grant, exactly as the web sidebar does. The
@@ -351,7 +353,7 @@ class _DispatchPageState extends State<DispatchPage> {
     final planned = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: LLColors.transparent,
       builder: (_) => const _RoutePlannerSheet(),
     );
     if (planned == true && mounted) _reload();
@@ -896,7 +898,7 @@ class _StopIndex extends StatelessWidget {
       child: Text(
         '$index',
         style: TextStyle(
-          color: Colors.white,
+          color: LLColors.white,
           fontSize: context.fs(11),
           fontWeight: FontWeight.w700,
         ),

@@ -8,6 +8,8 @@ import '../../ui/kit/feedback.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// The persistent frame: drawer navigation, hotel scope, sync state and the
 /// operator identity. Every signed-in screen renders inside it.
 class AppShell extends StatelessWidget {
@@ -402,7 +404,7 @@ class AppDrawerItem extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
         child: Material(
-          color: active ? c.sidebarHoverBg : Colors.transparent,
+          color: active ? c.sidebarHoverBg : LLColors.transparent,
           borderRadius: BorderRadius.circular(Radii.md),
           child: InkWell(
             borderRadius: BorderRadius.circular(Radii.md),

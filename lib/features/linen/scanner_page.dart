@@ -18,6 +18,8 @@ import '../../ui/theme.dart';
 import '_linen_shared.dart';
 import 'linen_tracking_detail_page.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// Port of `features/linen/pages/linen-scanner.tsx`.
 ///
 /// Camera, Bluetooth, and typed entry are peers, not a primary path and a fallback:
@@ -526,7 +528,7 @@ class _BluetoothStatusIndicator extends StatelessWidget {
     final c = context.c;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      color: c.success.withOpacity(0.1),
+      color: c.success.withValues(alpha: 0.1),
       child: Row(
         children: [
           Icon(Icons.bluetooth_connected, size: 16, color: c.success),
@@ -575,7 +577,7 @@ class _Preview extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Container(color: Colors.black),
+              Container(color: LLColors.black),
               MobileScanner(
                 controller: controller,
                 onDetect: onDetect,
@@ -584,16 +586,16 @@ class _Preview extends StatelessWidget {
               ),
               if (starting)
                 const ColoredBox(
-                  color: Color(0xB3000000),
+                  color: LLColors.black70,
                   child: Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        AppSpinner(size: 26, color: Colors.white),
+                        AppSpinner(size: 26, color: LLColors.white),
                         SizedBox(height: 10),
                         Text(
                           'Starting camera',
-                          style: TextStyle(color: Colors.white, fontSize: 13),
+                          style: TextStyle(color: LLColors.white, fontSize: 13),
                         ),
                       ],
                     ),
@@ -606,7 +608,7 @@ class _Preview extends StatelessWidget {
                       width: 190,
                       height: 190,
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.white70, width: 2),
+                        border: Border.all(color: LLColors.white70, width: 2),
                         borderRadius: BorderRadius.circular(Radii.xl),
                       ),
                     ),
@@ -618,14 +620,14 @@ class _Preview extends StatelessWidget {
                   right: 0,
                   bottom: 0,
                   child: ColoredBox(
-                    color: Color(0x66000000),
+                    color: LLColors.black40,
                     child: Padding(
                       padding:
                           EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                       child: Text(
                         'Scanning is automatic',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white, fontSize: 12),
+                        style: TextStyle(color: LLColors.white, fontSize: 12),
                       ),
                     ),
                   ),
@@ -648,7 +650,7 @@ class _CameraError extends StatelessWidget {
   Widget build(BuildContext context) {
     final denied = error.errorCode == MobileScannerErrorCode.permissionDenied;
     return ColoredBox(
-      color: Colors.black,
+      color: LLColors.black,
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -660,13 +662,13 @@ class _CameraError extends StatelessWidget {
                     ? Icons.no_photography_outlined
                     : Icons.videocam_off_outlined,
                 size: 30,
-                color: Colors.white70,
+                color: LLColors.white70,
               ),
               const SizedBox(height: 10),
               Text(
                 _cameraErrorText(error),
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white70, fontSize: 12.5),
+                style: const TextStyle(color: LLColors.white70, fontSize: 12.5),
               ),
               const SizedBox(height: 12),
               if (denied)

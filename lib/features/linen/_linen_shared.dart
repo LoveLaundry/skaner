@@ -10,6 +10,8 @@ import '../../ui/kit/feedback.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/theme.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// The linen module lives on the bills service, exactly as `billsApi` does in
 /// `linen.service.ts`.
 const String linenService = ServiceNames.bills;
@@ -405,7 +407,7 @@ class LinenTimeline extends StatelessWidget {
                             ? linenStatusTone(
                                     linenStatusFrom(events[i].toStatus))
                                 .dot(c)
-                            : Colors.transparent,
+                            : LLColors.transparent,
                         border: Border.all(
                           color: linenStatusTone(
                                   linenStatusFrom(events[i].toStatus))

@@ -4,6 +4,8 @@ import '../theme.dart';
 import 'feedback.dart';
 import 'primitives.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// Port of `components/ui/stat-card.tsx`.
 /// The tone is reserved for trend direction, never decoration.
 enum StatTrend {
@@ -278,7 +280,7 @@ class AppTabs extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: active ? c.brand : Colors.transparent,
+                  color: active ? c.brand : LLColors.transparent,
                   width: 2,
                 ),
               ),

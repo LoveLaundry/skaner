@@ -6,6 +6,8 @@ import '../theme.dart';
 import 'feedback.dart';
 import 'primitives.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// A toast queue the whole app can raise errors and confirmations through,
 /// without any page having to own a banner.
 ///
@@ -180,7 +182,7 @@ class _ToastCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(Radii.md),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.10),
+            color: LLColors.black.withValues(alpha: 0.10),
             blurRadius: 12,
             offset: const Offset(0, 3),
           ),

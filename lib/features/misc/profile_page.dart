@@ -18,6 +18,8 @@ import '../../../ui/kit/inputs.dart';
 import '../../../ui/kit/primitives.dart';
 import '../../../ui/theme.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// Port of `features/quotations/pages/profile-page.tsx`.
 ///
 /// Saves through `PATCH /users/{id}/profile`, a multipart endpoint that takes
@@ -277,24 +279,24 @@ class _ProfilePageState extends State<ProfilePage> {
                             errorBuilder: (_, __, ___) =>
                                 Text(initials,
                                     style: t.headlineSmall
-                                        ?.copyWith(color: Colors.white))))
+                                        ?.copyWith(color: LLColors.white))))
                     : Center(
                         child: Text(
                           initials,
-                          style: t.headlineSmall?.copyWith(color: Colors.white),
+                          style: t.headlineSmall?.copyWith(color: LLColors.white),
                         ),
                       ),
               ),
               if (_editing)
                 Positioned.fill(
                   child: Material(
-                    color: Colors.black38,
+                    color: LLColors.black40,
                     shape: const CircleBorder(),
                     child: InkWell(
                       customBorder: const CircleBorder(),
                       onTap: _pickAvatar,
                       child: const Icon(Icons.photo_camera_outlined,
-                          color: Colors.white, size: 28),
+                          color: LLColors.white, size: 28),
                     ),
                   ),
                 ),

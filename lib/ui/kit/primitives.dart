@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../theme.dart';
 
+import '../../design/ll_tokens.dart';
+
 enum AppButtonVariant {
   primary,
   secondary,
@@ -120,7 +122,7 @@ class _AppButtonState extends State<AppButton> {
             : _hovered
                 ? c.brandHover
                 : c.brand;
-        fg = Colors.white;
+        fg = LLColors.white;
         border = c.brand;
         shadow = Shadows.xs;
       case AppButtonVariant.secondary:
@@ -128,31 +130,31 @@ class _AppButtonState extends State<AppButton> {
         fg = _hovered ? c.fg : c.fg2;
         border = _hovered ? c.lineStrong : c.line2;
       case AppButtonVariant.ghost:
-        bg = _hovered ? c.surfaceHover : Colors.transparent;
+        bg = _hovered ? c.surfaceHover : LLColors.transparent;
         fg = _hovered ? c.fg : c.fgMuted;
-        border = Colors.transparent;
+        border = LLColors.transparent;
       case AppButtonVariant.outline:
         bg = _hovered ? c.brandBorder : c.brandSoft;
         fg = c.brandText;
         border = _hovered ? c.brand : c.brandBorder;
       case AppButtonVariant.warning:
-        bg = _hovered ? Color.lerp(c.warning, Colors.black, 0.15)! : c.warning;
-        fg = Colors.white;
+        bg = _hovered ? LLColors.tint(c.warning, 0.85) : c.warning;
+        fg = LLColors.white;
         border = c.warning;
         shadow = Shadows.xs;
       case AppButtonVariant.danger:
-        bg = _hovered ? Color.lerp(c.danger, Colors.black, 0.15)! : c.danger;
-        fg = Colors.white;
+        bg = _hovered ? LLColors.tint(c.danger, 0.85) : c.danger;
+        fg = LLColors.white;
         border = c.danger;
         shadow = Shadows.xs;
       case AppButtonVariant.dangerGhost:
-        bg = _hovered ? c.dangerSoft : Colors.transparent;
+        bg = _hovered ? c.dangerSoft : LLColors.transparent;
         fg = c.danger;
-        border = Colors.transparent;
+        border = LLColors.transparent;
       case AppButtonVariant.link:
-        bg = Colors.transparent;
+        bg = LLColors.transparent;
         fg = c.brandText;
-        border = Colors.transparent;
+        border = LLColors.transparent;
     }
 
     final enabled = widget.onPressed != null && !widget.loading;
@@ -170,9 +172,9 @@ class _AppButtonState extends State<AppButton> {
         onHighlightChanged: (p) => setState(() => _pressed = p),
         onHover: (h) => setState(() => _hovered = h),
         splashColor: v == AppButtonVariant.link
-            ? Colors.transparent
+            ? LLColors.transparent
             : fg.withValues(alpha: 0.10),
-        highlightColor: Colors.transparent,
+        highlightColor: LLColors.transparent,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Radii.md),
@@ -307,7 +309,7 @@ class AppBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.c;
     final (fg, bg, border) = tone.resolve(c);
-    final fgOut = solid ? Colors.white : fg;
+    final fgOut = solid ? LLColors.white : fg;
     return Container(
       padding: EdgeInsets.symmetric(
           horizontal: compact ? 6 : 8, vertical: compact ? 1.5 : 3),
@@ -368,7 +370,7 @@ class AppAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.c;
     final fg = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white
+        ? LLColors.white
         : c.brandText;
     return Container(
       width: size,
@@ -541,13 +543,13 @@ class AppFilterChip extends StatelessWidget {
               if (icon != null) ...[
                 Icon(icon,
                     size: 14,
-                    color: selected ? Colors.white : c.fgMuted),
+                    color: selected ? LLColors.white : c.fgMuted),
                 const SizedBox(width: 5),
               ],
               Text(
                 label,
                 style: t.labelMedium
-                    ?.copyWith(color: selected ? Colors.white : c.fg2),
+                    ?.copyWith(color: selected ? LLColors.white : c.fg2),
               ),
               if (count != null) ...[
                 const SizedBox(width: 6),
@@ -556,14 +558,14 @@ class AppFilterChip extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
                   decoration: BoxDecoration(
                     color: selected
-                        ? Colors.white.withValues(alpha: 0.22)
+                        ? LLColors.white.withValues(alpha: 0.22)
                         : c.surface3,
                     borderRadius: BorderRadius.circular(Radii.pill),
                   ),
                   child: Text(
                     '$count',
                     style: t.labelSmall
-                        ?.copyWith(color: selected ? Colors.white : c.fg3),
+                        ?.copyWith(color: selected ? LLColors.white : c.fg3),
                   ),
                 ),
               ],

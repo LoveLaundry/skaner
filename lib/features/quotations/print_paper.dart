@@ -9,6 +9,8 @@ import '../../ui/kit/feedback.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/theme.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// Neutral paper tokens for every printable document in this feature.
 ///
 /// A print sheet must never inherit the app's dark surfaces or brand accents:
@@ -17,9 +19,9 @@ import '../../ui/theme.dart';
 class Paper {
   Paper._();
 
-  static const Color ink = Color(0xFF111827);
-  static const Color muted = Color(0xFF6B7280);
-  static const Color rule = Color(0xFFE5E7EB);
+  static const Color ink = LLColors.black;
+  static const Color muted = LLColors.textMuted;
+  static const Color rule = LLColors.black10;
 
   static const TextStyle head = TextStyle(
     fontSize: 9.5,
@@ -42,7 +44,7 @@ class PaperSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         width: width,
-        color: Colors.white,
+        color: LLColors.white,
         padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
         child: DefaultTextStyle(
           style: Paper.body,
@@ -245,7 +247,7 @@ class PaperTable extends StatelessWidget {
           else
             for (var r = 0; r < rows.length; r++)
               Container(
-                color: zebra && r.isOdd ? const Color(0xFFF7F7F8) : null,
+                color: zebra && r.isOdd ? LLColors.black02 : null,
                 padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 3),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -417,7 +419,7 @@ class CompanyLetterhead extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 11.5,
                         fontStyle: FontStyle.italic,
-                        color: Color(0xFF333333),
+                        color: LLColors.black80,
                       ),
                     ),
                   ],
@@ -427,7 +429,7 @@ class CompanyLetterhead extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                 decoration: BoxDecoration(
                   border: Border.all(color: Paper.ink),
-                  color: const Color(0xFFF9F9F9),
+                  color: LLColors.black02,
                 ),
                 child: Text(
                   'Reg. No: ${Company.registrationNo}',
@@ -451,7 +453,7 @@ class CompanyLetterhead extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                   decoration: BoxDecoration(
                     border: Border.all(color: Paper.ink),
-                    color: const Color(0xFFF5F5F5),
+                    color: LLColors.black04,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

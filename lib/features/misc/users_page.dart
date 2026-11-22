@@ -12,6 +12,8 @@ import '../../../ui/kit/inputs.dart';
 import '../../../ui/kit/primitives.dart';
 import '../../../ui/theme.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// Port of `features/quotations/pages/users-page.tsx`.
 ///
 /// Admin-only (`/users` requires the ADMIN role on the user service), so the
@@ -228,7 +230,7 @@ class _UsersPageState extends State<UsersPage> {
             ),
             child: Text(
               name.isEmpty ? '?' : name[0].toUpperCase(),
-              style: t.titleSmall?.copyWith(color: Colors.white),
+              style: t.titleSmall?.copyWith(color: LLColors.white),
             ),
           ),
           const SizedBox(width: 12),

@@ -15,6 +15,8 @@ import '../../ui/theme.dart';
 import '../quotations/print_paper.dart';
 import 'shop_bill_model.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// A print-optimised shop bill.
 ///
 /// The server owns the printable document, so this screen pulls
@@ -218,7 +220,7 @@ class _PrintSheet extends StatelessWidget {
 
     return Container(
       width: 420,
-      color: Colors.white,
+      color: LLColors.white,
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
       child: DefaultTextStyle(
         style: const TextStyle(color: _ink, fontSize: 11.5),

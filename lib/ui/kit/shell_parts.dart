@@ -7,6 +7,8 @@ import '../../core/api/sync_engine.dart';
 import '../../core/utils/formatting.dart';
 import '../theme.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// Port of `components/ui/sync-status-bar.tsx`: a passive, always-visible line
 /// that states where the data on screen came from. Tapping it explains why.
 class AppSyncStatusBar extends StatelessWidget {
@@ -445,7 +447,7 @@ class _CommandRow extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
       child: Material(
-        color: selected ? c.surfaceHover : Colors.transparent,
+        color: selected ? c.surfaceHover : LLColors.transparent,
         borderRadius: BorderRadius.circular(Radii.md),
         child: InkWell(
           borderRadius: BorderRadius.circular(Radii.md),

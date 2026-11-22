@@ -22,6 +22,12 @@ import '../../../ui/kit/primitives.dart';
 import '../../../ui/theme.dart';
 import '../../../ui/kit/inputs.dart';
 
+import '../../design/ll_tokens.dart';
+
+// PDF output uses the same five approved bases (and opacity tints of them).
+const PdfColor _pdfMuted = PdfColor(0, 0, 0, 0.65);
+const PdfColor _pdfRule = PdfColor(0, 0, 0, 0.20);
+
 /// Port of `features/reports-backup/reports-backup-page.tsx`.
 ///
 /// The browser build wrote into a folder the user picked with the File System
@@ -781,7 +787,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           alignment: pw.Alignment.centerRight,
           child: pw.Text(
             'Page ${context.pageNumber} of ${context.pagesCount}',
-            style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
+            style: pw.TextStyle(fontSize: 9, color: _pdfMuted),
           ),
         ),
         build: (context) => [
@@ -803,7 +809,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           pw.Text('Data sources',
               style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
           pw.Table(
-            border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
+            border: pw.TableBorder.all(color: _pdfRule, width: 0.5),
             children: [
               for (final s in snapshot.sources)
                 pw.TableRow(children: [
@@ -878,7 +884,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
   pw.Widget _recordTable(
       List<_Column> spec, List<Map<String, dynamic>> records) {
     return pw.Table(
-      border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
+      border: pw.TableBorder.all(color: _pdfRule, width: 0.5),
       children: [
         pw.TableRow(children: [
           for (final col in spec)
@@ -1278,7 +1284,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.symmetric(vertical: 7),
           decoration: BoxDecoration(
-            color: active ? c.surface : Colors.transparent,
+            color: active ? c.surface : LLColors.transparent,
             borderRadius: BorderRadius.circular(Radii.md),
             boxShadow: active ? Shadows.sm : null,
           ),
@@ -1383,7 +1389,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
       width: double.infinity,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF111827),
+        color: LLColors.surfaceDark,
         borderRadius: BorderRadius.circular(Radii.lg),
         border: Border.all(color: c.line2),
       ),
@@ -1393,7 +1399,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
           Text(
             'RUN LOG',
             style: t.labelSmall?.copyWith(
-              color: const Color(0xFF9CA3AF),
+              color: LLColors.white50,
               letterSpacing: 0.8,
               fontWeight: FontWeight.w600,
             ),
@@ -1408,7 +1414,7 @@ class _BackupRestorePageState extends State<BackupRestorePage> {
                   fontFamily: 'monospace',
                   fontSize: context.fs(11),
                   height: 1.5,
-                  color: Color(0xFFD1D5DB),
+                  color: LLColors.white80,
                 ),
               ),
             ),

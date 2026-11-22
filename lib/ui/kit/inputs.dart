@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import '../theme.dart';
 import 'primitives.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// A stat/field caption: uppercase, letter-spaced, muted.
 ///
 /// Replaces the hand-rolled `labelSmall.copyWith(color, fontSize: 10,
@@ -858,7 +860,7 @@ class _AppSignaturePadState extends State<AppSignaturePad> {
     final canvas = Canvas(recorder);
     canvas.scale(scale);
     final paint = Paint()
-      ..color = const Color(0xFF0F172A)
+      ..color = LLColors.black
       ..strokeWidth = 2.2
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round

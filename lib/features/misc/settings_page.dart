@@ -188,6 +188,47 @@ class _SettingsPageState extends State<SettingsPage> {
                 animation: _theme,
                 builder: (context, _) => Column(
                   children: [
+              // Quick light/dark toggle. ThemeState persists the choice under
+              // the existing `theme-preset` SharedPreferences key.
+              AppCard(
+                padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
+                child: Row(
+                  children: [
+                    Icon(
+                      _theme.theme.isDark
+                          ? Icons.brightness_4
+                          : Icons.brightness_7,
+                      size: 20,
+                      color: c.brand,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Dark mode', style: t.titleSmall),
+                          Text(
+                            _theme.theme.isDark
+                                ? 'Dark palette is active'
+                                : 'Light palette is active',
+                            style: t.bodySmall?.copyWith(color: c.fgFaint),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: _theme.theme.isDark
+                          ? 'Switch to light theme'
+                          : 'Switch to dark theme',
+                      icon: Icon(_theme.theme.isDark
+                          ? Icons.brightness_7
+                          : Icons.brightness_4),
+                      onPressed: _theme.toggleDark,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
               _sectionCard(
                 title: 'Light themes',
                 subtitle: 'Clean, bright themes for daytime use',

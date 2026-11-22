@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../ui/theme.dart';
 
+import '../../design/ll_tokens.dart';
+
 /// The brand mark, drawn rather than shipped as an asset so it re-tints with the
 /// active theme instead of carrying a hard-coded background.
 class AppLogo extends StatelessWidget {
@@ -31,7 +33,7 @@ class AppLogo extends StatelessWidget {
           child: Icon(
             Icons.local_laundry_service_outlined,
             size: size * 0.58,
-            color: Colors.white,
+            color: LLColors.white,
           ),
         ),
         if (showWordmark) ...[
