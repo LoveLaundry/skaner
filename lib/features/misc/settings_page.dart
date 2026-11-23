@@ -17,9 +17,9 @@ import 'app_settings_store.dart';
 /// settings a mobile build needs that the web app gets from its env layer.
 ///
 /// Appearance is the React screen one-for-one: nine theme presets, six font
-/// sizes, and a live preview. After that come the four things a shipped APK
-/// cannot get from a `.env` — backend URLs, the AI service key, device cache and
-/// outbox maintenance, and signing out.
+/// sizes, and a live preview. After that come the things a shipped APK cannot
+/// get from a `.env` — backend URLs, device cache and outbox maintenance, and
+/// signing out.
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -30,8 +30,6 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   final _urls = <String, TextEditingController>{};
   late final ThemeState _theme;
-  late final TextEditingController _aiKey;
-  bool _revealKey = false;
   int _outboxCount = 0;
   int _failedCount = 0;
   bool _busy = false;
@@ -43,14 +41,12 @@ class _SettingsPageState extends State<SettingsPage> {
     for (final service in ServiceNames.all) {
       _urls[service] = TextEditingController(text: AppSettingsStore.serviceUrl(service));
     }
-    _aiKey = TextEditingController(text: AppSettingsStore.aiKey);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AppSettingsStore.load().then((_) {
         if (!mounted) return;
         for (final service in ServiceNames.all) {
           _urls[service]!.text = AppSettingsStore.serviceUrl(service);
         }
-        _aiKey.text = AppSettingsStore.aiKey;
         setState(() {});
       });
       _countOutbox();
@@ -62,7 +58,6 @@ class _SettingsPageState extends State<SettingsPage> {
     for (final c in _urls.values) {
       c.dispose();
     }
-    _aiKey.dispose();
     super.dispose();
   }
 
@@ -92,14 +87,6 @@ class _SettingsPageState extends State<SettingsPage> {
     if (!mounted) return;
     setState(() => _busy = false);
     AppToast.success(context, 'Backend URLs updated');
-  }
-
-  Future<void> _saveKey() async {
-    setState(() => _busy = true);
-    await AppSettingsStore.setAiKey(_aiKey.text);
-    if (!mounted) return;
-    setState(() => _busy = false);
-    AppToast.success(context, 'AI key saved');
   }
 
   Future<void> _resetUrls() async {
@@ -415,48 +402,6 @@ class _SettingsPageState extends State<SettingsPage> {
                           onPressed: _resetUrls,
                         ),
                       ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 14),
-              AppCard(
-                padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.key_outlined, size: 17, color: c.brand),
-                        const SizedBox(width: 8),
-                        Text('AI service key', style: t.titleSmall),
-                      ],
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      'AI insights use the authenticated service session; no API key is stored on this device.',
-                      style: t.bodySmall?.copyWith(color: c.fgFaint),
-                    ),
-                    const SizedBox(height: 12),
-                    AppTextInput(
-                      controller: _aiKey,
-                      obscureText: !_revealKey,
-                      suffix: AppButton.icon(
-                        icon: _revealKey
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                        tooltip: _revealKey ? 'Hide' : 'Show',
-                        onPressed: () => setState(() => _revealKey = !_revealKey),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    AppButton(
-                      label: 'Save key',
-                      icon: Icons.save_outlined,
-                      variant: AppButtonVariant.primary,
-                      block: true,
-                      loading: _busy,
-                      onPressed: _saveKey,
                     ),
                   ],
                 ),

@@ -12,14 +12,13 @@ import '../../../state/app_scope.dart';
 import '../../../ui/kit/feedback.dart';
 import '../../../ui/kit/primitives.dart';
 import '../../../ui/theme.dart';
-import 'app_settings_store.dart';
 
 /// Port of `features/ai/pages/ai-insights-page.tsx`.
 ///
-/// The Love AI service is not a normal JSON API: every request is signed and
-/// every response carries a hash of its own payload. [LoveAiClient] is the Dart
-/// twin of `features/ai/api/ai-api.ts` — it signs with the key from Settings and
-/// refuses to hand the UI a payload whose `data_hash` does not match.
+/// The Love AI service scopes every response to the signed-in user's JWT.
+/// [LoveAiClient] is the Dart twin of `features/ai/api/ai-api.ts`: it never
+/// holds a service key and refuses to hand the UI a payload whose `data_hash`
+/// does not match.
 class AiInsightsPage extends StatefulWidget {
   const AiInsightsPage({super.key});
 
@@ -42,8 +41,12 @@ class _AiInsightsPageState extends State<AiInsightsPage> {
   @override
   void initState() {
     super.initState();
-    _ai = LoveAiClient(key: AppSettingsStore.aiKey, baseUrl: ApiConfig.aiBase);
-    final cache = AppScope.read(context).cache;
+    final services = AppScope.read(context);
+    _ai = LoveAiClient(
+      tokenProvider: () => services.auth.token,
+      baseUrl: ApiConfig.aiBase,
+    );
+    final cache = services.cache;
     _insights = ResourceController<Map<String, dynamic>>(
       key: 'ai.insights',
       cache: cache,
@@ -829,26 +832,28 @@ class _EmptyNote extends StatelessWidget {
 /// Signs every request with the four `X-` headers the service expects and
 /// verifies `data_hash` before returning the payload. A mismatch is a hard
 /// failure: a tampered or truncated body is never shown to the operator.
-class LoveAiClient {
-  LoveAiClient({required this.key, required this.baseUrl, http.Client? client})
-      : _client = client ?? http.Client();
+typedef TokenProvider = String? Function();
 
-  final String key;
+class LoveAiClient {
+  LoveAiClient({
+    required this.tokenProvider,
+    required this.baseUrl,
+    http.Client? client,
+  }) : _client = client ?? http.Client();
+
+  final TokenProvider tokenProvider;
   final String baseUrl;
   final http.Client _client;
 
   static const _timeout = Duration(seconds: 30);
 
-  Map<String, String> _headers(String method, String path, String body) {
-    final timestamp =
-        (DateTime.now().millisecondsSinceEpoch ~/ 1000).toString();
-    final bodyHash = sha256Hex(body);
-    final canonical = [method.toUpperCase(), path, timestamp, bodyHash].join('\n');
+  Map<String, String> _headers() {
+    final token = tokenProvider();
+    if (token == null || token.isEmpty) {
+      throw AiException('Sign in to view AI insights.');
+    }
     return {
-      'X-API-Key': key,
-      'X-Timestamp': timestamp,
-      'X-Body-Hash': bodyHash,
-      'X-Signature': hmacSha256Hex(key, canonical),
+      'Authorization': 'Bearer $token',
       'Content-Type': 'application/json',
     };
   }
@@ -863,11 +868,8 @@ class LoveAiClient {
 
   /// Returns the verified `data` object of the envelope.
   Future<Map<String, dynamic>> _get(String path, {Map<String, String>? query}) async {
-    final signedPath = query == null || query.isEmpty
-        ? path
-        : '$path?${Uri(path: path, queryParameters: query).query.split('?').last}';
     final response = await _client
-        .get(_uri(path, query), headers: _headers('GET', signedPath, ''))
+        .get(_uri(path, query), headers: _headers())
         .timeout(_timeout);
     return _verify(response, path);
   }
