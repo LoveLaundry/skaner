@@ -124,18 +124,65 @@ class LinenScanAction {
   /// The status a successful scan moves the piece into.
   final LinenStatus targetStatus;
 
+  /// Hotel outbound: the same lifecycle result as `collect`, but a distinct
+  /// audit action so the client handover is visible in the tag history.
+  static const collect =
+      LinenScanAction('collect', 'Collect', LinenStatus.collected);
+  static const linenOut =
+      LinenScanAction('linen_out', 'Linen Out', LinenStatus.collected);
+  static const receive =
+      LinenScanAction('receive', 'Receive', LinenStatus.atLaundry);
+  static const startWash =
+      LinenScanAction('start_wash', 'Start Wash', LinenStatus.washing);
+  static const completeWash =
+      LinenScanAction('complete_wash', 'Complete Wash', LinenStatus.drying);
+  static const press =
+      LinenScanAction('press', 'Press', LinenStatus.pressing);
+  static const ready = LinenScanAction('ready', 'Ready', LinenStatus.ready);
+  static const deliver =
+      LinenScanAction('deliver', 'Deliver', LinenStatus.delivered);
+  static const markMissing =
+      LinenScanAction('mark_missing', 'Mark Missing', LinenStatus.missing);
+  static const markDamaged =
+      LinenScanAction('mark_damaged', 'Mark Damaged', LinenStatus.damaged);
+  static const retire =
+      LinenScanAction('retire', 'Retire', LinenStatus.retired);
+
+  static const reWash =
+      LinenScanAction('start_wash', 'Re-wash', LinenStatus.washing);
+
   static const List<LinenScanAction> all = [
-    LinenScanAction('collect', 'Collect', LinenStatus.collected),
-    LinenScanAction('receive', 'Receive', LinenStatus.atLaundry),
-    LinenScanAction('start_wash', 'Start Wash', LinenStatus.washing),
-    LinenScanAction('complete_wash', 'Complete Wash', LinenStatus.drying),
-    LinenScanAction('press', 'Press', LinenStatus.pressing),
-    LinenScanAction('ready', 'Ready', LinenStatus.ready),
-    LinenScanAction('deliver', 'Deliver', LinenStatus.delivered),
-    LinenScanAction('mark_missing', 'Mark Missing', LinenStatus.missing),
-    LinenScanAction('mark_damaged', 'Mark Damaged', LinenStatus.damaged),
-    LinenScanAction('retire', 'Retire', LinenStatus.retired),
+    collect,
+    linenOut,
+    receive,
+    startWash,
+    completeWash,
+    press,
+    ready,
+    deliver,
+    markMissing,
+    markDamaged,
+    retire,
   ];
+
+  static const Set<String> hotelValues = <String>{
+    'collect',
+    'linen_out',
+    'mark_missing',
+    'mark_damaged',
+  };
+
+  static const Set<String> laundryValues = <String>{
+    'receive',
+    'start_wash',
+    'complete_wash',
+    'press',
+    'ready',
+    'deliver',
+    'retire',
+    'mark_missing',
+    'mark_damaged',
+  };
 
   static LinenScanAction? byValue(String? value) {
     for (final a in all) {
@@ -197,58 +244,64 @@ class LinenItem {
   bool get isRetired => status == LinenStatus.retired;
 
   /// What a scan is allowed to do next, based on where the piece is now.
+  ///
+  /// This is the status-life-cycle filter only. The session's side filter is
+  /// applied by the scanner UI and by the shared `postLinenScan` helper.
   List<LinenScanAction> get allowedActions {
     switch (status) {
       case LinenStatus.inStock:
       case LinenStatus.atClient:
         return const [
-          LinenScanAction('collect', 'Collect', LinenStatus.collected),
-          LinenScanAction('mark_missing', 'Mark Missing', LinenStatus.missing),
-          LinenScanAction('retire', 'Retire', LinenStatus.retired),
+          LinenScanAction.collect,
+          LinenScanAction.linenOut,
+          LinenScanAction.markMissing,
+          LinenScanAction.retire,
         ];
       case LinenStatus.collected:
         return const [
-          LinenScanAction('receive', 'Receive', LinenStatus.atLaundry),
-          LinenScanAction('mark_missing', 'Mark Missing', LinenStatus.missing),
+          LinenScanAction.receive,
+          LinenScanAction.markMissing,
         ];
       case LinenStatus.atLaundry:
         return const [
-          LinenScanAction('start_wash', 'Start Wash', LinenStatus.washing),
-          LinenScanAction('mark_damaged', 'Mark Damaged', LinenStatus.damaged),
+          LinenScanAction.startWash,
+          LinenScanAction.markDamaged,
         ];
       case LinenStatus.washing:
         return const [
-          LinenScanAction('complete_wash', 'Complete Wash', LinenStatus.drying),
-          LinenScanAction('mark_damaged', 'Mark Damaged', LinenStatus.damaged),
+          LinenScanAction.completeWash,
+          LinenScanAction.markDamaged,
         ];
       case LinenStatus.drying:
         return const [
-          LinenScanAction('press', 'Press', LinenStatus.pressing),
-          LinenScanAction('mark_damaged', 'Mark Damaged', LinenStatus.damaged),
+          LinenScanAction.press,
+          LinenScanAction.markDamaged,
         ];
       case LinenStatus.pressing:
         return const [
-          LinenScanAction('ready', 'Ready', LinenStatus.ready),
-          LinenScanAction('mark_damaged', 'Mark Damaged', LinenStatus.damaged),
+          LinenScanAction.ready,
+          LinenScanAction.markDamaged,
         ];
       case LinenStatus.ready:
         return const [
-          LinenScanAction('deliver', 'Deliver', LinenStatus.delivered),
-          LinenScanAction('mark_damaged', 'Mark Damaged', LinenStatus.damaged),
+          LinenScanAction.deliver,
+          LinenScanAction.markDamaged,
         ];
       case LinenStatus.delivered:
         return const [
-          LinenScanAction('collect', 'Collect', LinenStatus.collected),
+          LinenScanAction.collect,
+          LinenScanAction.linenOut,
         ];
       case LinenStatus.missing:
         return const [
-          LinenScanAction('collect', 'Collect', LinenStatus.collected),
-          LinenScanAction('receive', 'Receive', LinenStatus.atLaundry),
+          LinenScanAction.collect,
+          LinenScanAction.linenOut,
+          LinenScanAction.receive,
         ];
       case LinenStatus.damaged:
         return const [
-          LinenScanAction('start_wash', 'Re-wash', LinenStatus.washing),
-          LinenScanAction('retire', 'Retire', LinenStatus.retired),
+          LinenScanAction.reWash,
+          LinenScanAction.retire,
         ];
       case LinenStatus.retired:
         return const [];

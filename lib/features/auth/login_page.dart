@@ -85,8 +85,9 @@ class _LoginPageState extends State<LoginPage> {
         throw ApiException('Sign-in response was missing the session');
       }
       final user = AppUser.fromJson(Map<String, dynamic>.from(rawUser));
-      // Store selected role for role-based features
-      await auth.login(token, user);
+      // Store selected role for role-based features. Passing it into the
+      // session keeps the scan side correct even before the preference write.
+      await auth.login(token, user, selectedRole: _selectedRole.name);
       // Save role preference locally
       final prefs = services.storage;
       await prefs.setString('selected_role', _selectedRole.name);

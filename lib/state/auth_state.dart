@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/api/api_client.dart';
+import '../core/scan_access.dart' as scan;
 import '../nav/access.dart' as nav;
 
 /// Port of `src/types/auth.ts` + `src/context/AuthContext.tsx`.
@@ -22,6 +23,14 @@ class AppUser {
     this.userDp,
     this.employeeId,
     this.permissions,
+    this.roleIds,
+    this.platformAdmin = false,
+    this.clientType,
+    this.clientName,
+    this.hotelId,
+    this.shopId,
+    this.laundryId,
+    this.selectedRole,
   });
 
   final String id;
@@ -39,10 +48,50 @@ class AppUser {
   /// null. Parsed lazily by [permissionList].
   final String? permissions;
 
+  /// Every role the API supplied, plus [roleId]. Client accounts use prefixed
+  /// roles such as `HOTEL_MANAGER`; staff accounts may carry several.
+  final List<String>? roleIds;
+
+  /// The API's explicit platform-admin flag, independent of the role label.
+  final bool platformAdmin;
+
+  /// Side signals carried by client and staff sessions. A client token still
+  /// carries its provider's `laundry_id`, so the client type / entity id must
+  /// be considered together with it rather than treating any laundry id as a
+  /// laundry staff session.
+  final String? clientType;
+  final String? clientName;
+  final String? hotelId;
+  final String? shopId;
+  final String? laundryId;
+
+  /// The login screen's `selected_role` (`hotel` / `laundry`). Kept on the user
+  /// so the side survives a cold start and cannot be lost between login and
+  /// the first scan.
+  final String? selectedRole;
+
   bool get isAdmin => nav.isAdminRole(roleId);
   bool get isManager => nav.normaliseRole(roleId) == nav.Roles.manager;
   bool get isStaff => nav.normaliseRole(roleId) == nav.Roles.staff;
-  bool get isPlatformAdmin => nav.isPlatformAdminRole(roleId);
+  bool get isPlatformAdmin =>
+      platformAdmin ||
+      nav.isPlatformAdminRole(roleId) ||
+      (roleIds?.any(nav.isPlatformAdminRole) ?? false);
+
+  scan.ScanAccess get scanAccess => scan.scanAccessFor(
+        roleId: roleId,
+        roleIds: roleIds ?? const <String>[],
+        clientType: clientType,
+        hotelId: hotelId,
+        shopId: shopId,
+        laundryId: laundryId,
+        selectedRole: selectedRole,
+        platformAdmin: isPlatformAdmin,
+      );
+
+  Set<String> get allowedLinenScanActions => scanAccess.allowedActions;
+
+  bool canRunLinenScanAction(String action) => scanAccess.allows(action);
 
   List<String> get permissionList {
     final raw = permissions;
@@ -92,19 +141,67 @@ class AppUser {
     return list.contains(permission);
   }
 
-  factory AppUser.fromJson(Map<String, dynamic> j) => AppUser(
-        id: '${j['id'] ?? ''}',
-        userName: (j['user_name'] ?? j['userName'] ?? '') as String,
-        authId: (j['auth_id'] ?? j['authId'] ?? '') as String,
-        roleId: (j['role_id'] ?? j['roleId'] ?? '') as String,
-        status: (j['status'] ?? '') as String,
-        email: j['email'] as String?,
-        mobileNumber: (j['mobile_number'] ?? j['mobileNumber']) as String?,
-        bioData: (j['bio_data'] ?? j['bioData']) as String?,
-        userDp: (j['user_dp'] ?? j['userDp']) as String?,
-        employeeId: (j['employee_id'] ?? j['employeeId']) as String?,
-        permissions: (j['permissions'] as String?),
-      );
+  static String? _text(dynamic value) {
+    if (value == null) return null;
+    final text = value.toString().trim();
+    return text.isEmpty ? null : text;
+  }
+
+  static Map<String, dynamic>? _map(dynamic value) =>
+      value is Map ? Map<String, dynamic>.from(value) : null;
+
+  static List<String> _textList(dynamic value) {
+    if (value == null) return const [];
+    if (value is String) {
+      return value
+          .split(',')
+          .map((e) => e.trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+    if (value is Iterable) {
+      return value
+          .map((e) => _text(e))
+          .where((e) => e != null)
+          .cast<String>()
+          .toList();
+    }
+    return const [];
+  }
+
+  factory AppUser.fromJson(Map<String, dynamic> j) {
+    final scope = _map(j['client_scope'] ?? j['clientScope']) ?? const {};
+    String? field(String key, String camel) =>
+        _text(j[key] ?? j[camel]) ?? _text(scope[key]);
+    final roles = _textList(j['role_ids'] ?? j['roleIds'] ?? j['roles']);
+    final roleId = field('role_id', 'roleId') ?? '';
+    if (roleId.isNotEmpty &&
+        !roles.any((r) => r.toUpperCase() == roleId.toUpperCase())) {
+      roles.add(roleId);
+    }
+    final flag = j['platform_admin'] ?? j['platformAdmin'];
+    return AppUser(
+      id: '${j['id'] ?? ''}',
+      userName: (j['user_name'] ?? j['userName'] ?? '') as String,
+      authId: (j['auth_id'] ?? j['authId'] ?? '') as String,
+      roleId: roleId,
+      status: (j['status'] ?? '') as String,
+      email: j['email'] as String?,
+      mobileNumber: (j['mobile_number'] ?? j['mobileNumber']) as String?,
+      bioData: (j['bio_data'] ?? j['bioData']) as String?,
+      userDp: (j['user_dp'] ?? j['userDp']) as String?,
+      employeeId: (j['employee_id'] ?? j['employeeId']) as String?,
+      permissions: (j['permissions'] as String?),
+      roleIds: roles.isEmpty ? null : List.unmodifiable(roles),
+      platformAdmin: flag == true || '${flag ?? ''}'.toLowerCase() == 'true',
+      clientType: field('client_type', 'clientType'),
+      clientName: field('client_name', 'clientName'),
+      hotelId: field('hotel_id', 'hotelId'),
+      shopId: field('shop_id', 'shopId'),
+      laundryId: field('laundry_id', 'laundryId'),
+      selectedRole: _text(j['selected_role'] ?? j['selectedRole']),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -118,6 +215,14 @@ class AppUser {
         if (userDp != null) 'user_dp': userDp,
         if (employeeId != null) 'employee_id': employeeId,
         if (permissions != null) 'permissions': permissions,
+        if (roleIds != null && roleIds!.isNotEmpty) 'role_ids': roleIds,
+        if (platformAdmin) 'platform_admin': true,
+        if (clientType != null) 'client_type': clientType,
+        if (clientName != null) 'client_name': clientName,
+        if (hotelId != null) 'hotel_id': hotelId,
+        if (shopId != null) 'shop_id': shopId,
+        if (laundryId != null) 'laundry_id': laundryId,
+        if (selectedRole != null) 'selected_role': selectedRole,
       };
 
   AppUser copyWith({
@@ -130,6 +235,14 @@ class AppUser {
     String? userDp,
     String? employeeId,
     String? permissions,
+    List<String>? roleIds,
+    bool? platformAdmin,
+    String? clientType,
+    String? clientName,
+    String? hotelId,
+    String? shopId,
+    String? laundryId,
+    String? selectedRole,
   }) =>
       AppUser(
         id: id,
@@ -143,6 +256,14 @@ class AppUser {
         userDp: userDp ?? this.userDp,
         employeeId: employeeId ?? this.employeeId,
         permissions: permissions ?? this.permissions,
+        roleIds: roleIds ?? this.roleIds,
+        platformAdmin: platformAdmin ?? this.platformAdmin,
+        clientType: clientType ?? this.clientType,
+        clientName: clientName ?? this.clientName,
+        hotelId: hotelId ?? this.hotelId,
+        shopId: shopId ?? this.shopId,
+        laundryId: laundryId ?? this.laundryId,
+        selectedRole: selectedRole ?? this.selectedRole,
       );
 }
 
@@ -170,6 +291,10 @@ class AuthState extends ChangeNotifier {
 
   static const _tokenKey = 'll_token';
   static const _userKey = 'll_user';
+
+  /// Same key the login screen has always written. Reading it here makes the
+  /// choice survive a cold start, where the login radio button is gone.
+  static const _selectedRoleKey = 'selected_role';
   static const _secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock_this_device),
@@ -204,6 +329,13 @@ class AuthState extends ChangeNotifier {
   bool hasPermission(String permission) =>
       user?.hasPermission(permission) ?? false;
 
+  scan.ScanAccess get scanAccess =>
+      user?.scanAccess ?? const scan.ScanAccess(scan.ScanSide.unknown);
+
+  Set<String> get allowedLinenScanActions => scanAccess.allowedActions;
+
+  bool canRunLinenScanAction(String action) => scanAccess.allows(action);
+
   /// Reads the persisted session back on cold start and hands the token to the
   /// API client. A malformed token is left in place: the API will reject it and
   /// route through [onUnauthorized], exactly like the web client.
@@ -215,11 +347,12 @@ class AuthState extends ChangeNotifier {
       try {
         final decoded = jsonDecode(rawUser);
         if (decoded is Map) {
-          final session = AuthSession.fromJson({
-            'token': rawToken,
-            'user': Map<String, dynamic>.from(decoded),
-          });
-          _session = session;
+          final restoredUser = AppUser.fromJson(Map<String, dynamic>.from(decoded));
+          final savedSelection = prefs.getString(_selectedRoleKey);
+          final user = savedSelection != null && restoredUser.selectedRole == null
+              ? restoredUser.copyWith(selectedRole: savedSelection)
+              : restoredUser;
+          _session = AuthSession(token: rawToken, user: user);
           api.setToken(rawToken);
         }
       } catch (_) {
@@ -231,23 +364,39 @@ class AuthState extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login(String token, AppUser user) async {
+  /// [selectedRole] is the login screen's radio choice. It is carried on the
+  /// session so a hotel selection cannot silently fall back to laundry scans
+  /// before the preference is persisted (and after a cold start).
+  Future<void> login(
+    String token,
+    AppUser user, {
+    String? selectedRole,
+  }) async {
     await onBeforeSessionChange?.call();
-    _session = AuthSession(token: token, user: user);
+    final selection = selectedRole?.trim();
+    final nextUser = selection == null || selection.isEmpty
+        ? user
+        : user.copyWith(selectedRole: selection);
+    _session = AuthSession(token: token, user: nextUser);
     _error = null;
     api.setToken(token);
     final prefs = await SharedPreferences.getInstance();
     await _secureStorage.write(key: _tokenKey, value: token);
-    await prefs.setString(_userKey, jsonEncode(user.toJson()));
+    await prefs.setString(_userKey, jsonEncode(nextUser.toJson()));
+    if (selection != null) await prefs.setString(_selectedRoleKey, selection);
     notifyListeners();
   }
 
   Future<void> updateUser(AppUser user) async {
     final current = _session;
     if (current == null) return;
-    _session = AuthSession(token: current.token, user: user);
+    final selection = user.selectedRole ?? current.user.selectedRole;
+    final nextUser = selection == null
+        ? user
+        : user.copyWith(selectedRole: selection);
+    _session = AuthSession(token: current.token, user: nextUser);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_userKey, jsonEncode(user.toJson()));
+    await prefs.setString(_userKey, jsonEncode(nextUser.toJson()));
     notifyListeners();
   }
 

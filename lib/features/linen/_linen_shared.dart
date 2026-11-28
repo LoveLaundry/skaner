@@ -265,7 +265,16 @@ Future<bool> postLinenScan(
   String? location,
   String? notes,
 }) async {
-  final api = AppScope.read(context).api;
+  // Authorise before the request exists: even a stale screen or a crafted
+  // callback must never reach POST /linens/{docId}/scan on the wrong side.
+  final services = AppScope.read(context);
+  if (!services.auth.canRunLinenScanAction(action.value)) {
+    if (context.mounted) {
+      AppToast.error(context, '${action.label} is not available for this account');
+    }
+    return false;
+  }
+  final api = services.api;
   try {
     final result = await api.post(
       linenService,
@@ -290,8 +299,15 @@ Future<bool> postLinenScan(
   }
 }
 
-/// The `Quick Actions` grid: every entry in `SCAN_ACTIONS`, laid out two per
-/// row so a gloved hand still finds the control.
+Set<String> _sessionScanActions(BuildContext context) {
+  // No scope (or no signed-in user) means no actions. Never fail open.
+  final scope = context.getInheritedWidgetOfExactType<AppScope>();
+  return scope?.services.auth.allowedLinenScanActions ?? const <String>{};
+}
+
+/// The `Quick Actions` grid: the session's permitted entries in `SCAN_ACTIONS`,
+/// laid out two per row so a gloved hand still finds the control. Unauthorised
+/// actions are hidden here and rejected again in [postLinenScan].
 class LinenQuickActions extends StatelessWidget {
   const LinenQuickActions({
     super.key,
@@ -305,36 +321,53 @@ class LinenQuickActions extends StatelessWidget {
   final String? pendingValue;
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) {
+    final allowed = _sessionScanActions(context);
+    final visible =
+        actions.where((action) => allowed.contains(action.value)).toList();
+    if (visible.isEmpty) {
+      return const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const _SectionLabel('Quick actions'),
-          LayoutBuilder(
-            builder: (context, box) {
-              final width = (box.maxWidth - 8) / 2;
-              return Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final a in actions)
-                    SizedBox(
-                      width: width,
-                      child: AppButton(
-                        label: a.label,
-                        size: AppButtonSize.sm,
-                        variant: AppButtonVariant.outline,
-                        icon: linenStatusIcon(a.targetStatus),
-                        loading: pendingValue == a.value,
-                        onPressed:
-                            pendingValue == null ? () => onAction(a) : null,
-                      ),
-                    ),
-                ],
-              );
-            },
+          _SectionLabel('Quick actions'),
+          AppNotice(
+            message: 'No scans are available for this account.',
+            tone: AppTone.neutral,
           ),
         ],
       );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _SectionLabel('Quick actions'),
+        LayoutBuilder(
+          builder: (context, box) {
+            final width = (box.maxWidth - 8) / 2;
+            return Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final a in visible)
+                  SizedBox(
+                    width: width,
+                    child: AppButton(
+                      label: a.label,
+                      size: AppButtonSize.sm,
+                      variant: AppButtonVariant.outline,
+                      icon: linenStatusIcon(a.targetStatus),
+                      loading: pendingValue == a.value,
+                      onPressed:
+                          pendingValue == null ? () => onAction(a) : null,
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
 }
 
 class _SectionLabel extends StatelessWidget {
