@@ -185,14 +185,41 @@ final RegExp _codeParam = RegExp(
   r'[?&#](?:code|linen_id|linen|tag|id)=([^&#\s]+)',
   caseSensitive: false,
 );
-final RegExp _llToken = RegExp(r'\bLL-[A-Za-z0-9][A-Za-z0-9._-]*');
-final RegExp _codeShape = RegExp(r'^[A-Z0-9][A-Z0-9._-]{1,63}$');
+final RegExp _structuredId = RegExp(
+  r'^([A-Z]{2}[A-Z0-9]{1,5})-([A-Z])(\d{4})([A-Z]{2})$',
+);
+/// Matches a whole tag inside partly-read label text.
+final RegExp _tagToken = RegExp(r'\b[A-Z]{2}[A-Z0-9]{1,5}-[A-Z]\d{4}[A-Z]{2}\b');
 final RegExp _wrappers = RegExp(r'''^[\s"'`<([{]+|[\s"'`>)\]}]+$''');
+
+/// Two check letters: weighted mod-676 over the base, same as both APIs.
+String _checkLetters(String base) {
+  final text = base.replaceAll('-', '').toUpperCase();
+  var total = 0;
+  for (var index = 0; index < text.length; index += 1) {
+    total += (index + 1) * text.codeUnitAt(index);
+  }
+  final value = total % 676;
+  return String.fromCharCodes([
+    65 + value ~/ 26,
+    65 + value % 26,
+  ]);
+}
+
+/// Only checksummed tags are valid; LL-xxxxxx and numeric-only IDs are not.
+bool isValidStructuredId(String value) {
+  final match = _structuredId.firstMatch(value.trim().toUpperCase());
+  if (match == null) return false;
+  final number = int.tryParse(match.group(3)!) ?? 0;
+  if (number < 1 || number > 9999) return false;
+  final base = '${match.group(1)}-${match.group(2)}${match.group(3)}';
+  return match.group(4) == _checkLetters(base);
+}
 
 /// Turns whatever a printed tag carries into the identifier
 /// `/linens/by-code/{code}` expects, or `null` when the text is not a code.
 ///
-/// `linen-tag-generator.tsx` prints the bare `linen_id` (`LL-7K4P92`) and
+/// `linen-tag-generator.tsx` prints the bare structured ID (`BSG-A0001XY`) and
 /// `linen-scanner.tsx` only trims and upper-cases what jsQR decodes, so a bare
 /// code is the canonical shape. Two others show up in the field as well — a
 /// deep link (`/scan?code=…`, or the code as a path segment) and a label read
@@ -212,12 +239,11 @@ String? parseLinenCode(String? raw) {
   }
 
   s = s.replaceAll(_wrappers, '').trim().toUpperCase();
-  if (_codeShape.hasMatch(s)) return s;
+  if (isValidStructuredId(s)) return s;
 
-  final embedded = _llToken.firstMatch(s);
-  if (embedded != null) {
-    final candidate = embedded.group(0)!.toUpperCase();
-    if (_codeShape.hasMatch(candidate)) return candidate;
+  final embedded = _tagToken.firstMatch(s);
+  if (embedded != null && isValidStructuredId(embedded.group(0)!)) {
+    return embedded.group(0)!;
   }
   return null;
 }

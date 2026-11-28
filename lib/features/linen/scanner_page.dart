@@ -162,7 +162,7 @@ class _ScannerPageState extends State<ScannerPage> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: AppField(
               label: 'Linen ID',
-              hint: 'Type the code on the tag, e.g. LL-7K4P92',
+              hint: 'Type the code on the tag, e.g. BSG-A0001XL',
               error: _error,
               child: AppTextInput(
                 controller: _codeCtrl,

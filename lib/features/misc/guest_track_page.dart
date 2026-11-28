@@ -127,7 +127,7 @@ class _GuestTrackPageState extends State<GuestTrackPage> {
                   AppTextInput(
                     controller: _code,
                     label: 'Tag code',
-                    hint: 'e.g. LL-000123',
+                    hint: 'e.g. BSG-A0001XL',
                     icon: Icons.qr_code_2_rounded,
                     mono: true,
                     textCapitalization: TextCapitalization.characters,

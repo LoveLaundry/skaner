@@ -116,7 +116,7 @@ class _LinenTrackingPageState extends State<LinenTrackingPage> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
             child: AppField(
               label: 'Linen ID',
-              hint: 'e.g. LL-7K4P92',
+              hint: 'e.g. BSG-A0001XL',
               error: _lookupError,
               child: AppTextInput(
                 controller: _codeCtrl,
