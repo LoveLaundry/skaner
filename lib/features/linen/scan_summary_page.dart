@@ -8,6 +8,7 @@ import '../../ui/kit/feedback.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/theme.dart';
 import '_linen_shared.dart';
+import 'linen_tag_card.dart';
 
 /// Scan summary dashboard showing today's scanned items with real-time sync
 class ScanSummaryPage extends StatefulWidget {
@@ -138,7 +139,8 @@ class _ScanSummaryPageState extends State<ScanSummaryPage> {
                     Expanded(
                       child: _SummaryCard(
                         label: 'In Flow',
-                        value: '${statusCounts.values.where((v) => linenFlowStatuses.contains(linenStatusFrom(v.toString()))).fold<int>(0, (a, b) => a + b)}',
+                        value:
+                            '${statusCounts.values.where((v) => linenFlowStatuses.contains(linenStatusFrom(v.toString()))).fold<int>(0, (a, b) => a + b)}',
                         icon: Icons.local_shipping_outlined,
                         color: c.info,
                       ),
@@ -194,13 +196,15 @@ class _ScanSummaryPageState extends State<ScanSummaryPage> {
                     : _todayScans.isEmpty
                         ? AppEmptyState(
                             title: 'No scans today',
-                            message: 'Start scanning linen items to see them here.',
+                            message:
+                                'Start scanning linen items to see them here.',
                             icon: Icons.qr_code_scanner,
                           )
                         : ListView.separated(
                             padding: const EdgeInsets.fromLTRB(12, 0, 12, 24),
                             itemCount: _todayScans.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 8),
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(height: 8),
                             itemBuilder: (_, i) => _ScanCard(
                               scan: _todayScans[i],
                               onTap: () => _showScanDetail(_todayScans[i]),
@@ -217,17 +221,21 @@ class _ScanSummaryPageState extends State<ScanSummaryPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(scan.linenId),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _DetailRow('Item', scan.itemType),
-            _DetailRow('Client', scan.clientName),
-            _DetailRow('Action', scan.action),
-            _DetailRow('Status', linenStatusLabels[scan.status] ?? 'Unknown'),
-            _DetailRow('Time', Fmt.dateTime(scan.timestamp)),
-            _DetailRow('Synced', scan.synced ? 'Yes' : 'No'),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LinenTagCard(id: scan.linenId),
+              const SizedBox(height: 16),
+              _DetailRow('Item', scan.itemType),
+              _DetailRow('Client', scan.clientName),
+              _DetailRow('Action', scan.action),
+              _DetailRow('Status', linenStatusLabels[scan.status] ?? 'Unknown'),
+              _DetailRow('Time', Fmt.dateTime(scan.timestamp)),
+              _DetailRow('Synced', scan.synced ? 'Yes' : 'No'),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -335,6 +343,12 @@ class _ScanCard extends StatelessWidget {
                 Text(
                   '${scan.itemType} · ${scan.clientName}',
                   style: t.bodySmall?.copyWith(color: c.fgMuted),
+                ),
+                const SizedBox(height: 6),
+                LinenTagCard(
+                  id: scan.linenId,
+                  compact: true,
+                  compactWidth: 150,
                 ),
               ],
             ),

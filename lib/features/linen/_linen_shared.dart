@@ -193,7 +193,7 @@ final RegExp _tagToken = RegExp(r'\b[A-Z]{2}[A-Z0-9]{1,5}-[A-Z]\d{4}[A-Z]{2}\b')
 final RegExp _wrappers = RegExp(r'''^[\s"'`<([{]+|[\s"'`>)\]}]+$''');
 
 /// Two check letters: weighted mod-676 over the base, same as both APIs.
-String _checkLetters(String base) {
+String checkLetters(String base) {
   final text = base.replaceAll('-', '').toUpperCase();
   var total = 0;
   for (var index = 0; index < text.length; index += 1) {
@@ -213,7 +213,7 @@ bool isValidStructuredId(String value) {
   final number = int.tryParse(match.group(3)!) ?? 0;
   if (number < 1 || number > 9999) return false;
   final base = '${match.group(1)}-${match.group(2)}${match.group(3)}';
-  return match.group(4) == _checkLetters(base);
+  return match.group(4) == checkLetters(base);
 }
 
 /// Turns whatever a printed tag carries into the identifier

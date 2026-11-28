@@ -11,6 +11,7 @@ import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '_linen_shared.dart';
 import 'linen_items_page.dart';
+import 'linen_tag_card.dart';
 import 'linen_tracking_detail_page.dart';
 import 'scanner_page.dart';
 import '../../ui/theme.dart';
@@ -35,6 +36,7 @@ class _LinenTrackingPageState extends State<LinenTrackingPage> {
 
   bool _looking = false;
   String? _lookupError;
+  String? _previewCode;
 
   @override
   void initState() {
@@ -149,6 +151,19 @@ class _LinenTrackingPageState extends State<LinenTrackingPage> {
                     child: ListView(
                       padding: const EdgeInsets.only(bottom: 24),
                       children: [
+                        if (_previewCode != null)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                            child: AppCard(
+                              title: 'Current tag',
+                              subtitle: 'The code being looked up',
+                              child: LinenTagCard(
+                                id: _previewCode!,
+                                compact: true,
+                                compactWidth: 200,
+                              ),
+                            ),
+                          ),
                         LinenMetrics(stats: stats),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 2, 16, 0),
@@ -213,15 +228,20 @@ class _LinenTrackingPageState extends State<LinenTrackingPage> {
       MaterialPageRoute<String>(builder: (_) => const ScannerPage()),
     );
     if (!mounted || code == null || code.isEmpty) return;
+    setState(() => _previewCode = parseLinenCode(code) ?? code);
     await _openCode(code);
   }
 
   Future<void> _lookup() async {
     final code = parseLinenCode(_codeCtrl.text);
     if (code == null) {
-      setState(() => _lookupError = 'That does not look like a linen code');
+      setState(() {
+        _lookupError = 'That does not look like a linen code';
+        _previewCode = null;
+      });
       return;
     }
+    setState(() => _previewCode = code);
     await _openCode(code);
   }
 

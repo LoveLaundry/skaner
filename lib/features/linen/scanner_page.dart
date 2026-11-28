@@ -16,6 +16,7 @@ import '../../ui/kit/inputs.dart';
 import '../../ui/kit/primitives.dart';
 import '../../ui/theme.dart';
 import '_linen_shared.dart';
+import 'linen_tag_card.dart';
 import 'linen_tracking_detail_page.dart';
 
 import '../../design/ll_tokens.dart';
@@ -128,11 +129,11 @@ class _ScannerPageState extends State<ScannerPage> {
                   : _toggleTorch,
             ),
           AppButton.icon(
-            icon: _bluetoothOn
-                ? Icons.bluetooth_connected
-                : Icons.bluetooth,
-            tooltip: _bluetoothOn ? 'Disconnect Bluetooth' : 'Connect Bluetooth',
-            onPressed: _bluetoothOn ? _disconnectBluetooth : _showBluetoothDialog,
+            icon: _bluetoothOn ? Icons.bluetooth_connected : Icons.bluetooth,
+            tooltip:
+                _bluetoothOn ? 'Disconnect Bluetooth' : 'Connect Bluetooth',
+            onPressed:
+                _bluetoothOn ? _disconnectBluetooth : _showBluetoothDialog,
           ),
           AppButton.icon(
             icon: _cameraOn
@@ -144,104 +145,133 @@ class _ScannerPageState extends State<ScannerPage> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          if (_cameraOn || _starting)
-            _Preview(
-              controller: _scanner,
-              onDetect: _onDetect,
-              onRetry: _startCamera,
-              starting: _starting,
-            ),
-          if (_bluetoothOn)
-            _BluetoothStatusIndicator(
-              device: _bluetooth.connectedDevice,
-              onDisconnect: _disconnectBluetooth,
-            ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-            child: AppField(
-              label: 'Linen ID',
-              hint: 'Type the code on the tag, e.g. BSG-A0001XL',
-              error: _error,
-              child: AppTextInput(
-                controller: _codeCtrl,
-                hint: 'Enter linen ID',
-                icon: Icons.keyboard_alt_outlined,
-                mono: true,
-                textCapitalization: TextCapitalization.characters,
-                textInputAction: TextInputAction.search,
-                onSubmitted: (_) => _lookupTyped(_codeCtrl.text),
-                onChanged: (_) {
-                  if (_error != null) setState(() => _error = null);
-                },
-                suffix: IconButton(
-                  icon: const Icon(Icons.search, size: 18),
-                  tooltip: 'Look up',
-                  onPressed:
-                      _resolveBusy ? null : () => _lookupTyped(_codeCtrl.text),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    label: 'Cancel',
-                    variant: AppButtonVariant.secondary,
-                    expand: true,
-                    onPressed: () => Navigator.of(context).pop(_code),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: AppButton(
-                    label: 'Open full record',
-                    icon: Icons.open_in_new,
-                    variant: AppButtonVariant.primary,
-                    expand: true,
-                    onPressed: item == null ? null : () => _openDetail(item),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (_history.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      // The field, actions and result have to stay reachable while the camera
+      // is running or the keyboard is up — a fixed Column used to push them off
+      // a short phone screen.
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'RECENT',
-                    style: context.texts.labelSmall?.copyWith(
-                      color: c.fgFaint,
-                      fontSize: 10.5,
-                      letterSpacing: 0.6,
+                  if (_cameraOn || _starting)
+                    _Preview(
+                      controller: _scanner,
+                      onDetect: _onDetect,
+                      onRetry: _startCamera,
+                      starting: _starting,
+                    ),
+                  if (_bluetoothOn)
+                    _BluetoothStatusIndicator(
+                      device: _bluetooth.connectedDevice,
+                      onDisconnect: _disconnectBluetooth,
+                    ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                    child: AppField(
+                      label: 'Linen ID',
+                      hint: 'Type the code on the tag, e.g. BSG-A0001XL',
+                      error: _error,
+                      child: AppTextInput(
+                        controller: _codeCtrl,
+                        hint: 'Enter linen ID',
+                        icon: Icons.keyboard_alt_outlined,
+                        mono: true,
+                        textCapitalization: TextCapitalization.characters,
+                        textInputAction: TextInputAction.search,
+                        onSubmitted: (_) => _lookupTyped(_codeCtrl.text),
+                        onChanged: (_) {
+                          if (_error != null) setState(() => _error = null);
+                        },
+                        suffix: IconButton(
+                          icon: const Icon(Icons.search, size: 18),
+                          tooltip: 'Look up',
+                          onPressed: _resolveBusy
+                              ? null
+                              : () => _lookupTyped(_codeCtrl.text),
+                        ),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: [
-                      for (final code in _history.take(8))
-                        AppFilterChip(
-                          label: code,
-                          selected: code == _code,
-                          onTap: () => _lookupTyped(code),
-                        ),
-                    ],
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: LayoutBuilder(
+                      builder: (context, box) {
+                        final width = box.maxWidth < 340
+                            ? box.maxWidth
+                            : (box.maxWidth - 8) / 2;
+                        return Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            SizedBox(
+                              width: width,
+                              child: AppButton(
+                                label: 'Cancel',
+                                variant: AppButtonVariant.secondary,
+                                expand: true,
+                                onPressed: () =>
+                                    Navigator.of(context).pop(_code),
+                              ),
+                            ),
+                            SizedBox(
+                              width: width,
+                              child: AppButton(
+                                label: 'Open full record',
+                                icon: Icons.open_in_new,
+                                variant: AppButtonVariant.primary,
+                                expand: true,
+                                onPressed: item == null
+                                    ? null
+                                    : () => _openDetail(item),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
+                  if (_history.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'RECENT',
+                            style: context.texts.labelSmall?.copyWith(
+                              color: c.fgFaint,
+                              fontSize: 10.5,
+                              letterSpacing: 0.6,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: [
+                              for (final code in _history.take(8))
+                                AppFilterChip(
+                                  label: code,
+                                  selected: code == _code,
+                                  onTap: () => _lookupTyped(code),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  const SizedBox(height: 10),
+                  _resultBody(item),
                 ],
               ),
             ),
-          const SizedBox(height: 10),
-          Expanded(child: _resultBody(item)),
-        ],
+          );
+        },
       ),
     );
   }
@@ -259,12 +289,16 @@ class _ScannerPageState extends State<ScannerPage> {
     final controller = _result;
     if (controller == null) {
       return ListView(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.only(top: 20),
         children: [
           SizedBox(
             height: 200,
             child: AppEmptyState(
-              title: _cameraOn || _bluetoothOn ? 'Scanning active' : 'Ready to scan',
+              title: _cameraOn || _bluetoothOn
+                  ? 'Scanning active'
+                  : 'Ready to scan',
               message: _cameraOn
                   ? 'Scanning is automatic. Or type the code below.'
                   : _bluetoothOn
@@ -298,6 +332,8 @@ class _ScannerPageState extends State<ScannerPage> {
     }
     if (controller.isLoading) return const AppSkeletonList();
     return ListView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       children: [
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.3,
@@ -387,7 +423,8 @@ class _ScannerPageState extends State<ScannerPage> {
           child: _bluetoothDevices.isEmpty
               ? const Padding(
                   padding: EdgeInsets.all(20),
-                  child: Text('No devices found. Make sure your scanner is in pairing mode.'),
+                  child: Text(
+                      'No devices found. Make sure your scanner is in pairing mode.'),
                 )
               : ListView.builder(
                   shrinkWrap: true,
@@ -421,7 +458,8 @@ class _ScannerPageState extends State<ScannerPage> {
     final success = await _bluetooth.connect(device);
     if (!mounted) return;
     if (!success) {
-      setState(() => _error = 'Failed to connect to ${device.name ?? device.address}');
+      setState(() =>
+          _error = 'Failed to connect to ${device.name ?? device.address}');
     }
   }
 
@@ -567,7 +605,15 @@ class _Preview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final height = MediaQuery.of(context).size.height * 0.32;
+    final media = MediaQuery.of(context);
+    // Leave room for the ID field and actions on short screens and when the
+    // keyboard is open. Tall tablets still get a larger, capped preview.
+    final usableHeight = (media.size.height -
+            media.viewInsets.bottom -
+            media.padding.vertical -
+            kToolbarHeight)
+        .clamp(220.0, 1100.0);
+    final height = (usableHeight * 0.3).clamp(140.0, 300.0);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
       child: ClipRRect(
@@ -652,8 +698,8 @@ class _CameraError extends StatelessWidget {
     return ColoredBox(
       color: LLColors.black,
       child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -661,16 +707,16 @@ class _CameraError extends StatelessWidget {
                 denied
                     ? Icons.no_photography_outlined
                     : Icons.videocam_off_outlined,
-                size: 30,
+                size: 26,
                 color: LLColors.white70,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               Text(
                 _cameraErrorText(error),
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: LLColors.white70, fontSize: 12.5),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               if (denied)
                 AppButton(
                   label: 'Open settings',
@@ -707,6 +753,8 @@ class _Result extends StatelessWidget {
     final c = context.c;
     final t = context.texts;
     return ListView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 24),
       children: [
         AppCard(
@@ -734,6 +782,12 @@ class _Result extends StatelessWidget {
               Text(
                 '${item.itemType} · ${item.clientName}',
                 style: t.bodySmall?.copyWith(color: c.fgMuted),
+              ),
+              const SizedBox(height: 12),
+              LinenTagCard(
+                id: item.linenId,
+                compact: true,
+                compactWidth: 180,
               ),
             ],
           ),

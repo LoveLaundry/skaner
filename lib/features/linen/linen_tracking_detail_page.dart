@@ -11,6 +11,7 @@ import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '_linen_shared.dart';
 import 'garment_detail_page.dart';
+import 'linen_tag_card.dart';
 import '../../ui/theme.dart';
 
 /// Port of `features/linen/pages/linen-profile.tsx`.
@@ -246,6 +247,12 @@ class _Body extends StatelessWidget {
               ],
             ],
           ),
+        ),
+        const SizedBox(height: 10),
+        AppCard(
+          title: 'Linen tag',
+          subtitle: 'Scan either code to look up this piece',
+          child: LinenTagCard(id: item.linenId),
         ),
         const SizedBox(height: 10),
         AppCard(

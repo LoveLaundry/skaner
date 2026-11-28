@@ -8,6 +8,18 @@ void main() {
   const tag = 'BSG-A0001XL';
   const towelTag = 'TWH-A0020YU';
 
+  group('checkLetters', () {
+    test('matches the weighted mod-676 check letters used by the APIs', () {
+      expect(checkLetters('BSG-A0001'), 'XL');
+      expect(checkLetters('TWH-A0020'), 'YU');
+      expect(checkLetters('TWAB-A0001'), 'RV');
+      expect(
+          isValidStructuredId('BSG-A0001${checkLetters('BSG-A0001')}'), isTrue);
+      expect(isValidStructuredId('BSG-A0001${checkLetters('BSG-A0002')}'),
+          isFalse);
+    });
+  });
+
   group('parseLinenCode', () {
     test('accepts checksummed structured bare codes', () {
       expect(parseLinenCode('  bsg-a0001xl '), tag);

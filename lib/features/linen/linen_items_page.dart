@@ -14,6 +14,7 @@ import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../management/_management_shared.dart';
 import '_linen_shared.dart';
+import 'linen_tag_card.dart';
 import 'linen_tracking_detail_page.dart';
 import '../../ui/theme.dart';
 
@@ -263,6 +264,10 @@ class _LinenItemsPageState extends State<LinenItemsPage> {
                           : AppDataTable<LinenItem>(
                               columns: const [
                                 AppDataColumn<LinenItem>(
+                                  label: 'Linen ID',
+                                  value: _id,
+                                ),
+                                AppDataColumn<LinenItem>(
                                   label: 'Type',
                                   value: _type,
                                 ),
@@ -287,11 +292,11 @@ class _LinenItemsPageState extends State<LinenItemsPage> {
                               onRowTap: _open,
                               rowLeading: (_, item) => Padding(
                                 padding: const EdgeInsets.only(top: 1),
-                                child: Icon(
-                                  linenStatusIcon(item.status),
-                                  size: 18,
-                                  color: linenStatusTone(item.status)
-                                      .dot(context.c),
+                                child: LinenTagCard(
+                                  id: item.linenId,
+                                  compact: true,
+                                  compactWidth: 96,
+                                  showId: false,
                                 ),
                               ),
                               rowTrailing: (_, item) => Padding(
@@ -314,6 +319,8 @@ class _LinenItemsPageState extends State<LinenItemsPage> {
       ),
     );
   }
+
+  static String _id(LinenItem l) => l.linenId;
 
   static String _type(LinenItem l) => l.itemType;
 

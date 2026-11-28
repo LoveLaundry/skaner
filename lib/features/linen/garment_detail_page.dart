@@ -1,6 +1,4 @@
-import 'package:barcode_widget/barcode_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../core/models/json.dart' as json;
 import '../../core/models/linen.dart';
@@ -12,6 +10,7 @@ import '../../ui/kit/primitives.dart';
 import '../../ui/kit/shell_parts.dart';
 import '../../ui/theme.dart';
 import '_linen_shared.dart';
+import 'linen_tag_card.dart';
 import 'linen_tracking_detail_page.dart';
 
 /// The tag itself: what `linen-tag-generator.tsx` prints, rendered on the
@@ -143,53 +142,14 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.c;
-    final t = context.texts;
     return ListView(
       padding: const EdgeInsets.fromLTRB(12, 12, 12, 28),
       children: [
         AppCard(
           child: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: c.surface,
-                  borderRadius: BorderRadius.circular(Radii.md),
-                  border: Border.all(color: c.line),
-                ),
-                child: QrImageView(
-                  data: item.linenId,
-                  size: 168,
-                  backgroundColor: c.surface,
-                  eyeStyle: QrEyeStyle(
-                    eyeShape: QrEyeShape.square,
-                    color: c.fg,
-                  ),
-                  dataModuleStyle: QrDataModuleStyle(
-                    dataModuleShape: QrDataModuleShape.square,
-                    color: c.fg,
-                  ),
-                ),
-              ),
+              LinenTagCard(id: item.linenId),
               const SizedBox(height: 14),
-              SizedBox(
-                width: double.infinity,
-                child: BarcodeWidget(
-                  barcode: Barcode.code128(),
-                  data: item.linenId,
-                  drawText: false,
-                  height: 44,
-                  backgroundColor: c.surface,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                item.linenId,
-                style: t.titleMedium
-                    ?.copyWith(color: c.fg, fontFamily: 'monospace'),
-              ),
-              const SizedBox(height: 10),
               LinenStatusBadge(status: item.status, compact: false),
             ],
           ),
